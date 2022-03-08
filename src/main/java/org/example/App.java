@@ -27,34 +27,41 @@ public class App {
         graph.addEdge("2", "3");
         graph.addEdge("3", "4");
         graph.addEdge("4", "5");
-        graph.addEdge("5", "6");
+        graph.addEdge("4", "6");
         graph.addEdge("6", "3");
         graph.addEdge("6", "2");
-        System.out.println(depthFirstTraversal(graph, "6"));
+        System.out.println(depthFirstTraversal(5, "1", graph));
 
     }
 
-    // SEPARATE TO LEVELS
-    public static Set<String> depthFirstTraversal(Graph graph, String root) {
+    // TODO fix last neighbour
+    public static Map<Integer, List<String>> depthFirstTraversal(int k, String root, Graph graph) {
         Set<String> visited = new LinkedHashSet<String>();
+        Map<Integer, List<String>> test = new HashMap<>();
         Stack<String> stack = new Stack<String>();
         stack.push(root);
-        int i = 0;
-        while (!stack.isEmpty()) {
+        int i = 1;
+        while (!stack.isEmpty() && i <= k) {
             String vertex = stack.pop();
-            System.out.print("k nearest neighbour " + ++i + ": ");
+            System.out.print("k nearest neighbour " + i + ": ");
             if (!visited.contains(vertex)) {
+                test.put(i, new ArrayList<>());
                 visited.add(vertex);
                 for (Vertex v : graph.getAdjVertices(vertex)) {
                     System.out.print(v.getLabel() + ", ");
-                    stack.push(v.getLabel());
+                    if (!visited.contains(v.getLabel())) {
+                        stack.push(v.getLabel());
+                        test.get(i).add(v.getLabel());
+
+                    }
                 }
                 System.out.println();
             }
+            i++;
             System.out.println();
 
         }
-        return visited;
+        return test;
     }
 
     public static Set<String> breadthFirstTraversal(Graph graph, String root) {
