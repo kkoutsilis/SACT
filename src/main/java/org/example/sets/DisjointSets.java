@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class DisjointSets {
     private static final ArrayList<Representative> sets = new ArrayList<>();
 
-
+    //RETURN INDEX?
     public static Representative makeSet(int value) throws Exception {
         if (findSet(value) != -1) {
             throw new Exception("Value " + value + " already exists in set");
@@ -33,11 +33,12 @@ public class DisjointSets {
         return -1;
     }
 
+    // RETURN INDEX
     public static Representative union(int valueX, int valueY) throws Exception {
         int indexX = findSet(valueX);
         int indexY = findSet(valueY);
         if (indexX == -1 || indexY == -1) {
-            throw  new Exception("Value does not exist in set, cannot union");
+            throw new Exception("Value does not exist in set, cannot union");
         }
         Representative repX = sets.get(indexX);
         Representative repY = sets.get(indexY);
