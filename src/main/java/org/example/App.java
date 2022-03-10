@@ -1,37 +1,42 @@
 package org.example;
 
-import org.example.sets.DisjointSets;
-import org.example.sets.Representative;
-
 import java.util.*;
 
 public class App {
     public static void main(String[] args) {
 
-        Graph graph = testGraph2();
+        Graph graph = testGraph1();
         System.out.println(knn(3, "1", graph));
     }
 
-
+    // TODO find k nn not all of them
     public static Map<Integer, List<String>> knn(int k, String root, Graph graph) {
         Map<Integer, List<String>> nearestNeighbours = new HashMap<>();
         Set<String> visited = new LinkedHashSet<>();
         Stack<String> stack = new Stack<>();
+        Stack<Integer> levels = new Stack<>();
         stack.push(root);
         int i = 1;
+        levels.push(i);
         while (!stack.isEmpty()) {
             String vertex = stack.pop();
+            int level = levels.pop();
             if (!visited.contains(vertex)) {
                 visited.add(vertex);
-                nearestNeighbours.put(i, new ArrayList<>());
+                nearestNeighbours.putIfAbsent(level, new ArrayList<>());
                 for (Vertex v : graph.getEdges(vertex)) {
                     if (!visited.contains(v.getLabel())) {
                         stack.push(v.getLabel());
-                        nearestNeighbours.get(i).add(v.getLabel());
+                        levels.push(level+1);
+                        nearestNeighbours.get(level).add(v.getLabel());
                     }
                 }
             }
-            i ++;
+            i++;
+
+        }
+        if(nearestNeighbours.get(nearestNeighbours.size()).isEmpty()){
+            nearestNeighbours.remove(nearestNeighbours.size());
         }
         return nearestNeighbours;
     }
@@ -76,6 +81,31 @@ public class App {
 
         return graph;
     }
+
+    public static Graph testGraph3() {
+        Graph graph = new Graph();
+        graph.addVertex("1");
+        graph.addVertex("2");
+        graph.addVertex("3");
+        graph.addVertex("4");
+        graph.addVertex("5");
+        graph.addVertex("6");
+
+        graph.addEdge("1", "2");
+        graph.addEdge("1", "4");
+
+        graph.addEdge("2", "3");
+
+        graph.addEdge("3", "2");
+        graph.addEdge("3", "6");
+
+        graph.addEdge("4", "5");
+
+        graph.addEdge("6", "4");
+
+        return graph;
+    }
+
 
     public static Set<String> breadthFirstTraversal(Graph graph, String root) {
         Set<String> visited = new LinkedHashSet<>();
