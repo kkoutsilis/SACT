@@ -5,19 +5,20 @@ import java.util.*;
 public class App {
     public static void main(String[] args) {
 
-        Graph graph = testGraph1();
-        System.out.println(knn(3, "1", graph));
+        Graph graph = testGraph3();
+        System.out.println(knn(3, "2", graph));
     }
 
     // TODO find k nn not all of them
     public static Map<Integer, List<String>> knn(int k, String root, Graph graph) {
         Map<Integer, List<String>> nearestNeighbours = new HashMap<>();
         Set<String> visited = new LinkedHashSet<>();
-        Stack<String> stack = new Stack<>();
-        Stack<Integer> levels = new Stack<>();
+        Set<String> willVisit = new LinkedHashSet<>();
+        Deque<String> stack = new LinkedList<>();
+        Deque<Integer> levels = new LinkedList<>();
+
         stack.push(root);
-        int i = 1;
-        levels.push(i);
+        levels.push(1);
         while (!stack.isEmpty()) {
             String vertex = stack.pop();
             int level = levels.pop();
@@ -25,17 +26,16 @@ public class App {
                 visited.add(vertex);
                 nearestNeighbours.putIfAbsent(level, new ArrayList<>());
                 for (Vertex v : graph.getEdges(vertex)) {
-                    if (!visited.contains(v.getLabel())) {
+                    if (!visited.contains(v.getLabel()) && !willVisit.contains(v.getLabel())) {
                         stack.push(v.getLabel());
-                        levels.push(level+1);
+                        willVisit.add(v.getLabel());
+                        levels.push(level + 1);
                         nearestNeighbours.get(level).add(v.getLabel());
                     }
                 }
             }
-            i++;
-
         }
-        if(nearestNeighbours.get(nearestNeighbours.size()).isEmpty()){
+        if (nearestNeighbours.get(nearestNeighbours.size()).isEmpty()) {
             nearestNeighbours.remove(nearestNeighbours.size());
         }
         return nearestNeighbours;
@@ -90,18 +90,38 @@ public class App {
         graph.addVertex("4");
         graph.addVertex("5");
         graph.addVertex("6");
+        graph.addVertex("7");
+        graph.addVertex("8");
+        graph.addVertex("9");
+        graph.addVertex("10");
+
 
         graph.addEdge("1", "2");
-        graph.addEdge("1", "4");
+        graph.addEdge("1", "6");
+        graph.addEdge("1", "8");
 
         graph.addEdge("2", "3");
+        graph.addEdge("2", "6");
+        graph.addEdge("2", "7");
+        graph.addEdge("2", "9");
 
-        graph.addEdge("3", "2");
-        graph.addEdge("3", "6");
+        graph.addEdge("3", "10");
+        graph.addEdge("3", "4");
 
-        graph.addEdge("4", "5");
 
-        graph.addEdge("6", "4");
+        graph.addEdge("4", "2");
+
+        graph.addEdge("5", "3");
+        graph.addEdge("5", "9");
+
+        graph.addEdge("6", "10");
+
+        graph.addEdge("7", "5");
+
+        graph.addEdge("9", "2");
+        graph.addEdge("9", "10");
+
+        graph.addEdge("10", "1");
 
         return graph;
     }
