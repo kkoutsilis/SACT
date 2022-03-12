@@ -6,32 +6,29 @@ public class App {
     public static void main(String[] args) {
 
         Graph graph = testGraph3();
-        System.out.println(knn(3, "2", graph));
+        System.out.println(knn(3, "5", graph));
     }
 
     // TODO find k nn not all of them
     public static Map<Integer, List<String>> knn(int k, String root, Graph graph) {
         Map<Integer, List<String>> nearestNeighbours = new HashMap<>();
         Set<String> visited = new LinkedHashSet<>();
-        Set<String> willVisit = new LinkedHashSet<>();
-        Deque<String> stack = new LinkedList<>();
-        Deque<Integer> levels = new LinkedList<>();
+        Queue<String> queue = new LinkedList<>();
+        Queue<Integer> levels = new LinkedList<>();
 
-        stack.push(root);
-        levels.push(1);
-        while (!stack.isEmpty()) {
-            String vertex = stack.pop();
-            int level = levels.pop();
-            if (!visited.contains(vertex)) {
-                visited.add(vertex);
-                nearestNeighbours.putIfAbsent(level, new ArrayList<>());
-                for (Vertex v : graph.getEdges(vertex)) {
-                    if (!visited.contains(v.getLabel()) && !willVisit.contains(v.getLabel())) {
-                        stack.push(v.getLabel());
-                        willVisit.add(v.getLabel());
-                        levels.push(level + 1);
-                        nearestNeighbours.get(level).add(v.getLabel());
-                    }
+        visited.add(root);
+        queue.add(root);
+        levels.add(1);
+        while (!queue.isEmpty()) {
+            String vertex = queue.poll();
+            int level = levels.poll();
+            nearestNeighbours.putIfAbsent(level, new ArrayList<>());
+            for (Vertex v : graph.getEdges(vertex)) {
+                if (!visited.contains(v.getLabel())) {
+                    visited.add(v.getLabel());
+                    queue.add(v.getLabel());
+                    levels.add(level + 1);
+                    nearestNeighbours.get(level).add(v.getLabel());
                 }
             }
         }
@@ -40,6 +37,7 @@ public class App {
         }
         return nearestNeighbours;
     }
+
 
     public static Graph testGraph1() {
         Graph graph = new Graph();
