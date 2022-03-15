@@ -6,10 +6,9 @@ public class App {
     public static void main(String[] args) {
 
         Graph graph = testGraph3();
-        System.out.println(knn(3, "5", graph));
+        System.out.println(knn(4, "4", graph));
     }
 
-    // TODO find k nn not all of them
     public static Map<Integer, List<String>> knn(int k, String root, Graph graph) {
         Map<Integer, List<String>> nearestNeighbours = new HashMap<>();
         Set<String> visited = new LinkedHashSet<>();
@@ -20,8 +19,11 @@ public class App {
         queue.add(root);
         levels.add(1);
         while (!queue.isEmpty()) {
-            String vertex = queue.poll();
             int level = levels.poll();
+            if (level > k) {
+                break;
+            }
+            String vertex = queue.poll();
             nearestNeighbours.putIfAbsent(level, new ArrayList<>());
             for (Vertex v : graph.getEdges(vertex)) {
                 if (!visited.contains(v.getLabel())) {
@@ -121,6 +123,53 @@ public class App {
 
         graph.addEdge("10", "1");
 
+        return graph;
+    }
+
+    public static Graph testGraph4() {
+        Graph graph = new Graph();
+        graph.addVertex("1");
+        graph.addVertex("2");
+        graph.addVertex("3");
+        graph.addVertex("4");
+        graph.addVertex("5");
+        graph.addVertex("6");
+
+        graph.addEdge("1", "2");
+        graph.addEdge("1", "3");
+        graph.addEdge("1", "4");
+        graph.addEdge("1", "5");
+        graph.addEdge("1", "6");
+
+        graph.addEdge("2", "1");
+        graph.addEdge("2", "3");
+        graph.addEdge("2", "4");
+        graph.addEdge("2", "5");
+        graph.addEdge("2", "6");
+
+        graph.addEdge("3", "2");
+        graph.addEdge("3", "1");
+        graph.addEdge("3", "4");
+        graph.addEdge("3", "5");
+        graph.addEdge("3", "6");
+
+        graph.addEdge("4", "2");
+        graph.addEdge("4", "3");
+        graph.addEdge("4", "1");
+        graph.addEdge("4", "5");
+        graph.addEdge("4", "6");
+
+        graph.addEdge("5", "2");
+        graph.addEdge("5", "3");
+        graph.addEdge("5", "4");
+        graph.addEdge("5", "1");
+        graph.addEdge("5", "6");
+
+        graph.addEdge("6", "2");
+        graph.addEdge("6", "3");
+        graph.addEdge("6", "4");
+        graph.addEdge("6", "5");
+        graph.addEdge("6", "1");
         return graph;
     }
 }
