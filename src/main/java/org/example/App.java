@@ -8,9 +8,12 @@ public class App {
         Graph graph = testGraph3();
         Map<String, Set<String>> a = knn(3, graph);
         Map<String, Set<String>> b = rknn(a);
+        Map<String, Set<String>> c = mknn(a, b);
+
 
         System.out.println("kkn " + a);
         System.out.println("rknn " + b);
+        System.out.println("mknn " + c);
     }
 
     // return the nearest neighbours for k levels for one vertex
@@ -84,6 +87,17 @@ public class App {
             }
         }
         return reverseNearestNeighbours;
+    }
+
+    public static Map<String, Set<String>> mknn(Map<String, Set<String>> knn, Map<String, Set<String>> rknn) {
+        Map<String, Set<String>> mutualNearestNeighbours = new HashMap<>();
+        Set<String> D = knn.keySet();
+        for (String i : D) {
+            Set<String> intersection = new LinkedHashSet<>(knn.get(i));
+            intersection.retainAll(rknn.get(i));
+            mutualNearestNeighbours.put(i, intersection);
+        }
+        return mutualNearestNeighbours;
     }
 
 
