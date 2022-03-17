@@ -6,7 +6,7 @@ public class App {
     public static void main(String[] args) {
 
         Graph graph = testGraph3();
-        Map<String, Set<String>> a = knn2(3, graph);
+        Map<String, Set<String>> a = knn(3, graph);
         Map<String, Set<String>> b = rknn(a);
 
         System.out.println("kkn " + a);
@@ -14,7 +14,7 @@ public class App {
     }
 
     // return the nearest neighbours for k levels for one vertex
-    public static Map<Integer, List<String>> knn(int k, String root, Graph graph) {
+    public static Map<Integer, List<String>> knnLevels(int k, String root, Graph graph) {
         Map<Integer, List<String>> nearestNeighbours = new HashMap<>();
         Set<String> visited = new LinkedHashSet<>();
         Queue<String> queue = new LinkedList<>();
@@ -46,7 +46,7 @@ public class App {
     }
 
     // return the k nearest neighbours for each vertex of a graph
-    public static Map<String, Set<String>> knn2(int k, Graph graph) {
+    public static Map<String, Set<String>> knn(int k, Graph graph) {
         Map<String, Set<String>> nearestNeighbours = new HashMap<>();
         Set<String> indexes = new LinkedHashSet<>();
         graph.getVertices().keySet().forEach(vertex -> indexes.add(vertex.getLabel()));
