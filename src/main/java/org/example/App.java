@@ -6,8 +6,11 @@ public class App {
     public static void main(String[] args) {
 
         Graph graph = testGraph3();
-        System.out.println(knn(3, "10", graph));
-        System.out.println(knn2(3, graph));
+        Map<String, Set<String>> a = knn2(3, graph);
+        Map<String, Set<String>> b = rknn(a);
+
+        System.out.println("kkn " + a);
+        System.out.println("rknn " + b);
     }
 
     // return the nearest neighbours for k levels for one vertex
@@ -66,6 +69,21 @@ public class App {
             nearestNeighbours.put(index, neighbours);
         }
         return nearestNeighbours;
+    }
+
+    // reverse nearest neighbours of knn
+    public static Map<String, Set<String>> rknn(Map<String, Set<String>> knn) {
+        Map<String, Set<String>> reverseNearestNeighbours = new HashMap<>();
+        Set<String> D = knn.keySet();
+        for (String i : D) {
+            reverseNearestNeighbours.put(i, new LinkedHashSet<>());
+            for (String j : D) {
+                if (knn.get(j).contains(i)) {
+                    reverseNearestNeighbours.get(i).add(j);
+                }
+            }
+        }
+        return reverseNearestNeighbours;
     }
 
 
