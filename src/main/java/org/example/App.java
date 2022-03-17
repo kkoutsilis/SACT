@@ -6,9 +6,11 @@ public class App {
     public static void main(String[] args) {
 
         Graph graph = testGraph3();
-        System.out.println(knn(4, "4", graph));
+        System.out.println(knn(3, "10", graph));
+        System.out.println(knn2(3, graph));
     }
 
+    // return the nearest neighbours for k levels for one vertex
     public static Map<Integer, List<String>> knn(int k, String root, Graph graph) {
         Map<Integer, List<String>> nearestNeighbours = new HashMap<>();
         Set<String> visited = new LinkedHashSet<>();
@@ -36,6 +38,32 @@ public class App {
         }
         if (nearestNeighbours.get(nearestNeighbours.size()).isEmpty()) {
             nearestNeighbours.remove(nearestNeighbours.size());
+        }
+        return nearestNeighbours;
+    }
+
+    // return the k nearest neighbours for each vertex of a graph
+    public static Map<String, Set<String>> knn2(int k, Graph graph) {
+        Map<String, Set<String>> nearestNeighbours = new HashMap<>();
+        Set<String> indexes = new LinkedHashSet<>();
+        graph.getVertices().keySet().forEach(vertex -> indexes.add(vertex.getLabel()));
+        for (String index : indexes) {
+            Set<String> visited = new LinkedHashSet<>();
+            Set<String> neighbours = new LinkedHashSet<>();
+            Queue<String> queue = new LinkedList<>();
+            queue.add(index);
+            visited.add(index);
+            while (!queue.isEmpty() && neighbours.size() < k) {
+                String vertex = queue.poll();
+                for (Vertex v : graph.getEdges(vertex)) {
+                    if (!visited.contains(v.getLabel()) && neighbours.size() < k) {
+                        visited.add(v.getLabel());
+                        neighbours.add(v.getLabel());
+                        queue.add(v.getLabel());
+                    }
+                }
+            }
+            nearestNeighbours.put(index, neighbours);
         }
         return nearestNeighbours;
     }
