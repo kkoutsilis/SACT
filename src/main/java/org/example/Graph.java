@@ -1,24 +1,21 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Graph {
-    private Map<Vertex, List<Vertex>> vertices;
+    private final Map<Vertex, Set<Vertex>> vertices;
 
 
     public Graph() {
         this.vertices = new HashMap<>();
     }
 
-    public Graph(Map<Vertex, List<Vertex>> vertices) {
+    public Graph(Map<Vertex, Set<Vertex>> vertices) {
         this.vertices = vertices;
     }
 
     public void addVertex(String label) {
-        vertices.putIfAbsent(new Vertex(label), new ArrayList<>());
+        vertices.putIfAbsent(new Vertex(label), new LinkedHashSet<>());
     }
 
     public void removeVertex(String label) {
@@ -36,17 +33,17 @@ public class Graph {
     public void removeEdge(String label1, String label2) {
         Vertex v1 = new Vertex(label1);
         Vertex v2 = new Vertex(label2);
-        List<Vertex> eV1 = vertices.get(v1);
+        Set<Vertex> eV1 = vertices.get(v1);
         if (eV1 != null)
             eV1.remove(v2);
 
     }
 
-    public Map<Vertex, List<Vertex>> getVertices() {
+    public Map<Vertex, Set<Vertex>> getVertices() {
         return vertices;
     }
 
-    public List<Vertex> getEdges(String label) {
+    public Set<Vertex> getEdges(String label) {
         return vertices.get(new Vertex(label));
     }
 
