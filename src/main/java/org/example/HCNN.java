@@ -23,7 +23,7 @@ public class HCNN {
         return Collections.emptySet();
     }
     // types are probably wrong
-    private Set<String> assignOutliers(Map<String,Set<String>> clusters, Set<Integer> indexes, Set<Integer> outliers ){
+    private Map<String,Set<String>> assignOutliers(Map<String,Set<String>> clusters, Set<Integer> indexes, Set<Integer> outliers ){
         Map<String,Integer> label = new HashMap<>();
 
         for (int i=1; i <= clusters.size(); i++){
@@ -44,11 +44,25 @@ public class HCNN {
                 t = minStractSim;
             }
             if (label.get(Integer.toString(t)) == 0){
-
+                int minDist = Integer.MAX_VALUE;
+                for(int i: indexes ){
+                    if (label.get(Integer.toString(i)) >0){
+                        int distance = this.dist(i,o);
+                        if (minDist > distance){
+                            minDist = distance;
+                        }
+                    }
+                }
+                t = minDist;
             }
+            label.replace(Integer.toString(o),label.get(Integer.toString(t)));
 
+            Set<String> union = clusters.get(Integer.toString(o));
+            Set<String> oSet = new LinkedHashSet<>(Arrays.asList(Integer.toString(o)));
+            union.addAll(oSet);
+            clusters.replace(Integer.toString(o),union);
         }
-        return Collections.emptySet();
+        return clusters;
     }
      // this will have to return 2 Sets
     private Set<String> initializeClustering(){
@@ -65,5 +79,59 @@ public class HCNN {
 
         return intersection.size()/union.size();
 
+    }
+    // TODO this is calculating distances for all the vertices, either return dist list or refactor to find dist of specified ones.
+    public int dist(int source ,int dest)
+    {
+        int nOfVetcices = this.graph.getVertices().size()+1;
+        // create a min-heap and push source node having distance 0
+        PriorityQueue<Vertex> minHeap;
+        minHeap = new PriorityQueue<>(Comparator.comparingInt(vertex -> 1));
+        minHeap.add(new Vertex(Integer.toString(source)));
+
+        // set initial distance from the source to `v` as infinity
+        List<Integer> dist;
+        dist = new ArrayList<>(Collections.nCopies(nOfVetcices, Integer.MAX_VALUE));
+
+        // distance from the source to itself is zero
+        dist.set(source, 0);
+
+        // boolean array to track vertices for which minimum
+        // cost is already found
+        boolean[] done = new boolean[nOfVetcices];
+        done[source] = true;
+
+        // stores predecessor of a vertex (to a print path)
+        int[] prev = new int[nOfVetcices];
+        prev[source] = -1;
+
+        // run till min-heap is empty
+        while (!minHeap.isEmpty())
+        {
+            // Remove and return the best vertex
+            Vertex vertex = minHeap.poll();
+
+            // get the vertex number
+            int u = Integer.parseInt(vertex.getLabel());
+
+            // do for each neighbor `v` of `u`
+            for (Vertex edge: this.graph.getEdges(Integer.toString(u)))
+            {
+                int v = Integer.parseInt(edge.getLabel());
+                int weight = 1;
+
+                // Relaxation step
+                if (!done[v] && (dist.get(u) + weight) < dist.get(v))
+                {
+                    dist.set(v, dist.get(u) + weight);
+                    prev[v] = u;
+                    minHeap.add(new Vertex(Integer.toString(v)));
+                }
+            }
+            // mark vertex `u` as done so it will not get picked up again
+            done[u] = true;
+        }
+
+        return dist.get(dest);
     }
 }
