@@ -1,8 +1,5 @@
 package org.example;
 
-import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.math3.stat.inference.BinomialTest;
-
 import java.util.*;
 
 public class HCNN {
@@ -78,7 +75,7 @@ public class HCNN {
     // TODO this is calculating distances for all the vertices compared to source, refactor to find dist of source to destination vertex.
     public int dist(int source ,int dest)
     {
-        int nOfVetcices = this.graph.getVertices().size()+1;
+        int nOfVertices = this.graph.getVertices().size()+1;
         // create a min-heap and push source node having distance 0
         PriorityQueue<Vertex> minHeap;
         minHeap = new PriorityQueue<>(Comparator.comparingInt(vertex -> 1));
@@ -86,18 +83,18 @@ public class HCNN {
 
         // set initial distance from the source to `v` as infinity
         List<Integer> dist;
-        dist = new ArrayList<>(Collections.nCopies(nOfVetcices, Integer.MAX_VALUE));
+        dist = new ArrayList<>(Collections.nCopies(nOfVertices, Integer.MAX_VALUE));
 
         // distance from the source to itself is zero
         dist.set(source, 0);
 
         // boolean array to track vertices for which minimum
         // cost is already found
-        boolean[] done = new boolean[nOfVetcices];
+        boolean[] done = new boolean[nOfVertices];
         done[source] = true;
 
         // stores predecessor of a vertex (to a print path)
-        int[] prev = new int[nOfVetcices];
+        int[] prev = new int[nOfVertices];
         prev[source] = -1;
 
         // run till min-heap is empty
