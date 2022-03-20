@@ -89,7 +89,7 @@ public class HCNN {
         }
         return connSum;
     }
-
+    // TODO types will probably have to chage.
     private int link(Set<String> clusterA, Set<String> clusterB){
         Set<Set<String>> linkSet = new LinkedHashSet<>();
         for(String a:clusterA){
@@ -100,6 +100,10 @@ public class HCNN {
             }
         }
         return linkSet.size();
+    }
+    // TODO types will probably have to chage.
+    private  int sim(Set<String> clusterA, Set<String> clusterB){
+        return (conn(clusterA,clusterB)/(clusterA.size() * clusterB.size())) * (link(clusterA,clusterB)/clusterA.size()) * (link(clusterB,clusterA)/clusterB.size());
     }
     // TODO this is calculating distances for all the vertices compared to source, refactor to find dist of source to destination vertex.
     public int dist(int source ,int dest) {
