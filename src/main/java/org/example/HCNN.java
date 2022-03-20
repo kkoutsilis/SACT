@@ -65,7 +65,6 @@ public class HCNN {
         return Collections.emptySet();
     }
 
-    //probably wrong
     private int z(int i, int j){
         Set<String> intersection = new LinkedHashSet<>(this.knn.get(Integer.toString(i)));
         intersection.retainAll(this.knn.get(Integer.toString(j)));
@@ -76,7 +75,7 @@ public class HCNN {
         return intersection.size()/union.size();
 
     }
-    // TODO this is calculating distances for all the vertices, either return dist list or refactor to find dist of specified ones.
+    // TODO this is calculating distances for all the vertices compared to source, refactor to find dist of source to destination vertex.
     public int dist(int source ,int dest)
     {
         int nOfVetcices = this.graph.getVertices().size()+1;
