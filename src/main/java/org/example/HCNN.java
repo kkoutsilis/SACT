@@ -22,7 +22,7 @@ public class HCNN {
     public Set<String> fit(){
         return Collections.emptySet();
     }
-    // types are probably wrong
+    // types will probably have to change.
     private Map<String,Set<String>> assignOutliers(Map<String,Set<String>> clusters, Set<Integer> indexes, Set<Integer> outliers ){
         Map<String,Integer> label = new HashMap<>();
 
@@ -56,11 +56,7 @@ public class HCNN {
                 t = minDist;
             }
             label.replace(Integer.toString(o),label.get(Integer.toString(t)));
-
-            Set<String> union = clusters.get(Integer.toString(o));
-            Set<String> oSet = new LinkedHashSet<>(Arrays.asList(Integer.toString(o)));
-            union.addAll(oSet);
-            clusters.replace(Integer.toString(o),union);
+            clusters.get(Integer.toString(label.get(Integer.toString(o)))).add(Integer.toString(o));
         }
         return clusters;
     }
