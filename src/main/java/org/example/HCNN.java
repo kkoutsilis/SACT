@@ -19,6 +19,7 @@ public class HCNN {
     public Set<String> fit(){
         return Collections.emptySet();
     }
+
     // types will probably have to change.
     private Map<String,Set<String>> assignOutliers(Map<String,Set<String>> clusters, Set<Integer> indexes, Set<Integer> outliers ){
         Map<String,Integer> label = new HashMap<>();
@@ -71,6 +72,22 @@ public class HCNN {
 
         return intersection.size()/union.size();
 
+    }
+
+    private int conn(Set<String> clusterA, Set<String> clusterB){
+        int connSum= 0;
+        for (String a: clusterA){
+            Set<String> intersection = new LinkedHashSet<>(this.knn.get(a));
+            intersection.retainAll(clusterB);
+            connSum += intersection.size();
+        }
+
+        for (String b: clusterB){
+            Set<String> intersection = new LinkedHashSet<>(this.knn.get(b));
+            intersection.retainAll(clusterA);
+            connSum += intersection.size();
+        }
+        return connSum;
     }
     // TODO this is calculating distances for all the vertices compared to source, refactor to find dist of source to destination vertex.
     public int dist(int source ,int dest)
