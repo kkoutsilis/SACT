@@ -20,7 +20,7 @@ public class HCNN {
         return Collections.emptySet();
     }
 
-    // types will probably have to change.
+    // TODO types will probably have to change.
     private Map<String,Set<String>> assignOutliers(Map<String,Set<String>> clusters, Set<Integer> indexes, Set<Integer> outliers ){
         Map<String,Integer> label = new HashMap<>();
 
@@ -58,7 +58,7 @@ public class HCNN {
         }
         return clusters;
     }
-     // this will have to return 2 Sets
+     //TODO this will have to return 2 Sets, implement custom class to return 2 sets.
     private Set<String> initializeClustering(){
         return Collections.emptySet();
     }
@@ -73,7 +73,7 @@ public class HCNN {
         return intersection.size()/union.size();
 
     }
-
+    // TODO types will probably have to chage.
     private int conn(Set<String> clusterA, Set<String> clusterB){
         int connSum= 0;
         for (String a: clusterA){
@@ -89,9 +89,20 @@ public class HCNN {
         }
         return connSum;
     }
+
+    private int link(Set<String> clusterA, Set<String> clusterB){
+        Set<Set<String>> linkSet = new LinkedHashSet<>();
+        for(String a:clusterA){
+            Set<String> intersection = new LinkedHashSet<>(this.knn.get(a));
+            intersection.retainAll(clusterB);
+            if (!intersection.isEmpty()){
+                linkSet.add(intersection);
+            }
+        }
+        return linkSet.size();
+    }
     // TODO this is calculating distances for all the vertices compared to source, refactor to find dist of source to destination vertex.
-    public int dist(int source ,int dest)
-    {
+    public int dist(int source ,int dest) {
         int nOfVertices = this.graph.getVertices().size()+1;
         // create a min-heap and push source node having distance 0
         PriorityQueue<Vertex> minHeap;
@@ -140,7 +151,6 @@ public class HCNN {
             // mark vertex `u` as done so it will not get picked up again
             done[u] = true;
         }
-
         return dist.get(dest);
     }
 }
