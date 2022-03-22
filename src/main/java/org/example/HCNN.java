@@ -23,10 +23,6 @@ class CorePair {
         return this.j;
     }
 
-    public void setPair(int i, int j) {
-        this.i = i;
-        this.j = j;
-    }
 
     public void setI(int i) {
         this.i = i;
@@ -34,6 +30,11 @@ class CorePair {
 
     public void setJ(int j) {
         this.j = j;
+    }
+
+    public void setPair(int i, int j) {
+        this.setI(i);
+        this.setJ(j);
     }
 
     @Override
@@ -47,6 +48,64 @@ class CorePair {
     @Override
     public int hashCode() {
         return Objects.hash(getI(), getJ());
+    }
+}
+
+class PairSim {
+    private int i;
+    private int j;
+    private int similarity;
+
+    public PairSim() {
+    }
+
+    public PairSim(int i, int j, int similarity) {
+        this.i = i;
+        this.j = j;
+        this.similarity = similarity;
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    public void setI(int i) {
+        this.i = i;
+    }
+
+    public int getJ() {
+        return j;
+    }
+
+    public void setJ(int j) {
+        this.j = j;
+    }
+
+    public int getSimilarity() {
+        return similarity;
+    }
+
+    public void setSimilarity(int similarity) {
+        this.similarity = similarity;
+    }
+
+    public void setPairSim(int i, int j, int similarity) {
+        this.setI(i);
+        this.setJ(j);
+        this.setSimilarity(similarity);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PairSim)) return false;
+        PairSim pairSim = (PairSim) o;
+        return getI() == pairSim.getI() && getJ() == pairSim.getJ() && getSimilarity() == pairSim.getSimilarity();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getI(), getJ(), getSimilarity());
     }
 }
 
@@ -144,22 +203,22 @@ public class HCNN {
         int nOfIndexes = indexes.size();
         CorePair[] corePairs = new CorePair[nOfIndexes];
         int[] label = new int[nOfIndexes];
-        for (int i=0;i<n;i++){
-            corePairs[i] = new CorePair(0,0);
+        for (int i = 0; i < n; i++) {
+            corePairs[i] = new CorePair(0, 0);
             label[i] = 0;
         }
-        int last =0;
+        int last = 0;
         Set<String> outliers = new LinkedHashSet<>();
         int[][] structSimZ = new int[nOfIndexes][nOfIndexes];
 
         // lines 2-7
-        for (int i =1 ; i <= nOfIndexes ; i++){
+        for (int i = 1; i <= nOfIndexes; i++) {
             Set<String> Q = this.knn.get(Integer.toString(i));
-            for (String j: this.knn.get(Integer.toString(i))){
+            for (String j : this.knn.get(Integer.toString(i))) {
                 Q.addAll(this.rkkn.get(j));
             }
-            for(String q: Q){
-                structSimZ[i][Integer.parseInt(q)] = z(i,Integer.parseInt(q));
+            for (String q : Q) {
+                structSimZ[i][Integer.parseInt(q)] = z(i, Integer.parseInt(q));
             }
         }
 
