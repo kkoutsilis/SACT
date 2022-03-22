@@ -2,7 +2,7 @@ package org.example;
 
 import java.util.*;
 
-public class CorePair {
+class CorePair {
     private int i;
     private int j;
 
@@ -50,7 +50,7 @@ public class CorePair {
     }
 }
 
-public class ClustersAndOutliers {
+class ClustersAndOutliers {
     private Set<String> clusters;
     private Set<String> outliers;
 
