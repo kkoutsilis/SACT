@@ -110,22 +110,22 @@ class PairSim {
 }
 
 class ClustersAndOutliers {
-    private Set<String> clusters;
+    private Map<String, Set<String>> clusters;
     private Set<String> outliers;
 
     public ClustersAndOutliers() {
     }
 
-    public ClustersAndOutliers(Set<String> clusters, Set<String> outliers) {
+    public ClustersAndOutliers(Map<String, Set<String>> clusters, Set<String> outliers) {
         this.clusters = clusters;
         this.outliers = outliers;
     }
 
-    public Set<String> getClusters() {
+    public Map<String, Set<String>> getClusters() {
         return clusters;
     }
 
-    public void setClusters(Set<String> clusters) {
+    public void setClusters(Map<String, Set<String>> clusters) {
         this.clusters = clusters;
     }
 
@@ -221,9 +221,74 @@ public class HCNN {
                 structSimZ[i][Integer.parseInt(q)] = z(i, Integer.parseInt(q));
             }
         }
+        //line 8
+        List<PairSim> pairSims = new ArrayList<>();
+        for (int i = 1; i <= nOfIndexes; i++) {
+            for (int j = i + 1; j <= nOfIndexes; j++) {
+                int structSim = z(i, j);
+                if (structSim > 0) {
+                    pairSims.add(new PairSim(i, j, structSim));
+                }
+            }
+        }
+        // sort in descending order according to the
+        //similarity between data
+        //TODO this probably does not work, if it does need fixing.
+        Collections.sort(pairSims, Comparator.comparing(PairSim::getSimilarity));
+        Collections.reverse(pairSims);
 
+        // lines 10 to 22
+        for (int m = 1; m <= pairSims.size(); m++) {
+            PairSim pairSim = pairSims.get(m);
+            int i = pairSim.getI();
+            int j = pairSim.getJ();
+            if (label[i] == 0 && label[j] == 0) {
+                last += 1;
+                label[i] = label[j] = last;// Not sure about that
+                corePairs[last] = new CorePair(i, j);
 
-        return new ClustersAndOutliers();
+                Set<String> union = new LinkedHashSet<>(knn.get(Integer.toString(i)));
+                union.addAll(this.knn.get(Integer.toString(j)));
+                for (String u : union) {
+                    int ui = Integer.parseInt(u);
+                    if (label[ui] == 0) {
+                        label[ui] = last;
+                    }
+                    if (label[ui] != last) {
+                        CorePair corePair = corePairs[label[ui]];
+                        int h = corePair.getI();
+                        int k = corePair.getJ();
+
+                        int max = z(ui, i);
+                        int temp = z(ui, j);
+                        if (max < temp) {
+                            max = temp;
+                        }
+                        int min = z(ui, h);
+                        temp = z(ui, k);
+                        if (min > temp) {
+                            min = temp;
+                        }
+
+                        if (max > min) {
+                            label[ui] = max;
+                        }
+                    }
+                }
+            }
+        }
+        //line 23-28
+        Map<String, Set<String>> clusters = new HashMap<>();
+        for (int i : indexes) {
+            if (label[i] > 0) {
+                clusters.get(Integer.toString(label[i])).add(Integer.toString(i));
+            }
+            if (label[i] == 0) {
+                outliers.add(Integer.toString(i));
+            }
+        }
+
+        return new ClustersAndOutliers(clusters, outliers);
 
     }
 
