@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.sets.DisjointSets;
+
 import java.util.*;
 
 class CorePair {
@@ -138,6 +140,35 @@ class ClustersAndOutliers {
     }
 }
 
+class MSP {
+    private int i;
+    private int j;
+
+    public MSP() {
+    }
+
+    public MSP(int i, int j) {
+        this.i = i;
+        this.j = j;
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    public void setI(int i) {
+        this.i = i;
+    }
+
+    public int getJ() {
+        return j;
+    }
+
+    public void setJ(int j) {
+        this.j = j;
+    }
+}
+
 public class HCNN {
     private Graph graph;
     private int n;
@@ -154,12 +185,76 @@ public class HCNN {
         this.rkkn = rknn;
     }
 
-    public Set<String> fit() {
-        return Collections.emptySet();
+    public Map<String, Set<String>> fit() throws Exception {
+        Set<String> indexes = new LinkedHashSet<>();
+        Set<Integer> intIndexes = new LinkedHashSet<>();
+        ClustersAndOutliers clustersAndOutliers = this.initializeClustering(intIndexes);
+        Map<String, Set<String>> C = clustersAndOutliers.getClusters();
+        Set<String> D = clustersAndOutliers.getOutliers();
+
+        while (C.size() > this.n) {
+            int L = C.size();
+            // line 4
+            int tmax = Integer.MIN_VALUE;
+            for (int i = 0; i < L; i++) {
+                for (int j = i + 1; j < L; j++) {
+                    int similarity = sim(C.get(Integer.toString(i)), C.get(Integer.toString(j)));
+                    if (tmax < similarity) {
+                        tmax = similarity;
+                    }
+                }
+            }
+            // line 5
+            if (tmax == 0) {
+                break;
+            }
+
+            // line 7
+            Set<MSP> msp = new LinkedHashSet<>();
+            for (int i = 0; i < L; i++) {
+                for (int j = i + 1; j < L; j++) {
+                    int similarity = sim(C.get(Integer.toString(i)), C.get(Integer.toString(j)));
+                    if (similarity == tmax) {
+                        msp.add(new MSP(i, j));
+                    }
+                }
+            }
+            // line 8-10
+            DisjointSets DS = new DisjointSets();
+            for (int i = 1; i <= L; i++) {
+                DS.makeSet(C.get(Integer.toString(i)));
+            }
+            //line 11-12
+            for (MSP msp1 : msp) {
+                DS.union(C.get(Integer.toString(msp1.getI())), C.get(Integer.toString(msp1.getJ())));
+            }
+            // line 13-16
+            for (int i = 1; i <= L; i++) {
+                int index = DS.findSet(C.get(Integer.toString(i)));
+                Set<String> repr = DS.getRepresentative(index).getHead().getData(); // TODO refactor
+                if (repr != C.get(Integer.toString(i))) {
+                    repr.addAll(C.get(Integer.toString(i)));
+                    C.replace(Integer.toString(i), Collections.emptySet());
+                }
+            }
+
+            // line 17-20
+            Map<String, Set<String>> Ctemp = new HashMap<>(C);
+            C = new HashMap<>();
+            for (String cIndex : Ctemp.keySet()) {
+                Set<String> c = Ctemp.get(cIndex);
+                if (!c.isEmpty()) {
+                    C.get(cIndex).addAll(c); // TODO this is wrong
+                }
+            }
+        }
+        C = assignOutliers(C, indexes, D);
+
+        return C;
     }
 
     // TODO types will probably have to change.
-    private Map<String, Set<String>> assignOutliers(Map<String, Set<String>> clusters, Set<Integer> indexes, Set<Integer> outliers) {
+    private Map<String, Set<String>> assignOutliers(Map<String, Set<String>> clusters, Set<String> indexes, Set<String> outliers) {
         Map<String, Integer> label = new HashMap<>();
 
         for (int i = 1; i <= clusters.size(); i++) {
@@ -167,12 +262,12 @@ public class HCNN {
                 label.put(j, i);
             }
         }
-        for (Integer o : outliers) {
-            int t = o;
-            if (!this.knn.get(Integer.toString(o)).isEmpty()) {
+        for (String o : outliers) {
+            int t = Integer.parseInt(o);
+            if (!this.knn.get(o).isEmpty()) {
                 int minStractSim = Integer.MAX_VALUE;
-                for (String i : this.knn.get(Integer.toString(o))) {
-                    int stractSim = z(o, Integer.parseInt(i));
+                for (String i : this.knn.get(o)) {
+                    int stractSim = z(Integer.parseInt(o), Integer.parseInt(i));
                     if (minStractSim > stractSim) {
                         minStractSim = stractSim;
                     }
@@ -181,9 +276,9 @@ public class HCNN {
             }
             if (label.get(Integer.toString(t)) == 0) {
                 int minDist = Integer.MAX_VALUE;
-                for (int i : indexes) {
-                    if (label.get(Integer.toString(i)) > 0) {
-                        int distance = this.dist(i, o);
+                for (String i : indexes) {
+                    if (label.get(i) > 0) {
+                        int distance = this.dist(Integer.parseInt(i), Integer.parseInt(o));
                         if (minDist > distance) {
                             minDist = distance;
                         }
@@ -191,8 +286,8 @@ public class HCNN {
                 }
                 t = minDist;
             }
-            label.replace(Integer.toString(o), label.get(Integer.toString(t)));
-            clusters.get(Integer.toString(label.get(Integer.toString(o)))).add(Integer.toString(o));
+            label.replace(o, label.get(Integer.toString(t)));
+            clusters.get(Integer.toString(label.get(o))).add(o);
         }
         return clusters;
     }
