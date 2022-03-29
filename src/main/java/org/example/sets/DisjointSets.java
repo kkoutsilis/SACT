@@ -2,13 +2,18 @@ package org.example.sets;
 
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class DisjointSets {
-    private static final ArrayList<Representative> sets = new ArrayList<>();
+    private List<Representative> sets;
 
-    //RETURN INDEX?
-    public static Representative makeSet(int value) throws Exception {
-        if (findSet(value) != -1) {
+    public DisjointSets() {
+        this.sets = new ArrayList<>();
+    }
+
+    public int makeSet(Set<String> value) throws Exception {
+        if (this.findSet(value) != -1) {
             throw new Exception("Value " + value + " already exists in set");
         }
         Node node = new Node(value);
@@ -17,12 +22,12 @@ public class DisjointSets {
         representative.setHead(node);
         representative.setTail(node);
         sets.add(representative);
-        return representative;
+        return findSet(representative.getHead().getData()); //TODO refactor
     }
 
-    public static int findSet(int value) {
-        for (int i = 0; i < sets.size(); i++) {
-            Node searchNode = sets.get(i).getHead();
+    public int findSet(Set<String> value) {
+        for (int i = 0; i < this.sets.size(); i++) {
+            Node searchNode = this.sets.get(i).getHead();
             while (searchNode != null) {
                 if (searchNode.getData() == value) {
                     return i;
@@ -33,15 +38,14 @@ public class DisjointSets {
         return -1;
     }
 
-    // RETURN INDEX
-    public static Representative union(int valueX, int valueY) throws Exception {
+    public int union(Set<String> valueX, Set<String> valueY) throws Exception {
         int indexX = findSet(valueX);
         int indexY = findSet(valueY);
         if (indexX == -1 || indexY == -1) {
             throw new Exception("Value does not exist in set, cannot union");
         }
-        Representative repX = sets.get(indexX);
-        Representative repY = sets.get(indexY);
+        Representative repX = this.sets.get(indexX);
+        Representative repY = this.sets.get(indexY);
         Node tailX = repX.getTail();
         tailX.setNext(repY.getHead());
         repX.setTail(repY.getTail());
@@ -52,12 +56,17 @@ public class DisjointSets {
         } while (nodeY != null);
 
         sets.remove(indexY);
-        return repX;
+        return indexX;
     }
 
-    public static void printSets() {
-        for (int i = 0; i < sets.size(); i++) {
-            Representative rep = sets.get(i);
+    // TODO refactor probably
+    public Representative getRepresentative(int index) {
+        return this.sets.get(index);
+    }
+
+    public void printSets() {
+        for (int i = 0; i < this.sets.size(); i++) {
+            Representative rep = this.sets.get(i);
             System.out.print("Set " + i + " : { ");
             Node node = rep.getHead();
             while (node != null) {
