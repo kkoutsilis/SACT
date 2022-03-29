@@ -1,23 +1,23 @@
 package org.example.sets;
 
-import java.util.Objects;
+import java.util.Set;
 
 public class Node {
-    private int data;
+    private Set<String> data;
     private Node next;
     private Representative representative;
 
-    public Node(int data) {
+    public Node(Set<String> data) {
         this.next = null;
         this.representative = null;
         this.data = data;
     }
 
-    public int getData() {
+    public Set<String> getData() {
         return data;
     }
 
-    public void setData(int data) {
+    public void setData(Set<String> data) {
         this.data = data;
     }
 
