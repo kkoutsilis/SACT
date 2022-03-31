@@ -171,6 +171,8 @@ class MSP {
 
 public class HCNN {
     private Graph graph;
+    private List<Integer> indexes;
+    private List<Vertex> G;
     private int n;
     private Map<String, Set<String>> knn;
     private Map<String, Set<String>> rkkn;
@@ -183,12 +185,18 @@ public class HCNN {
         this.n = n;
         this.knn = knn;
         this.rkkn = rknn;
+        this.indexes = new ArrayList<>();
+        for(int i=0; i< this.graph.getVertices().size(); i++){
+            this.indexes.add(i);
+        }
+        this.G = new ArrayList<>(this.graph.getVertices().keySet());
     }
 
     public Map<String, Set<String>> fit() throws Exception {
-        Set<String> indexes = new LinkedHashSet<>();
-        Set<Integer> intIndexes = new LinkedHashSet<>();
-        ClustersAndOutliers clustersAndOutliers = this.initializeClustering(intIndexes);
+
+
+
+        ClustersAndOutliers clustersAndOutliers = this.initializeClustering();
         Map<String, Set<String>> C = clustersAndOutliers.getClusters();
         Set<String> D = clustersAndOutliers.getOutliers();
 
@@ -196,8 +204,8 @@ public class HCNN {
             int L = C.size();
             // line 4
             int tmax = Integer.MIN_VALUE;
-            for (int i = 0; i < L; i++) {
-                for (int j = i + 1; j < L; j++) {
+            for (int i = 0; i <= L; i++) {
+                for (int j = i + 1; j <= L; j++) {
                     int similarity = sim(C.get(Integer.toString(i)), C.get(Integer.toString(j)));
                     if (tmax < similarity) {
                         tmax = similarity;
@@ -248,13 +256,13 @@ public class HCNN {
                 }
             }
         }
-        C = assignOutliers(C, indexes, D);
+        C = assignOutliers(C,D);
 
         return C;
     }
 
     // TODO types will probably have to change.
-    private Map<String, Set<String>> assignOutliers(Map<String, Set<String>> clusters, Set<String> indexes, Set<String> outliers) {
+    private Map<String, Set<String>> assignOutliers(Map<String, Set<String>> clusters, Set<String> outliers) {
         Map<String, Integer> label = new HashMap<>();
 
         for (int i = 1; i <= clusters.size(); i++) {
@@ -276,9 +284,9 @@ public class HCNN {
             }
             if (label.get(Integer.toString(t)) == 0) {
                 int minDist = Integer.MAX_VALUE;
-                for (String i : indexes) {
-                    if (label.get(i) > 0) {
-                        int distance = this.dist(Integer.parseInt(i), Integer.parseInt(o));
+                for (int i : indexes) {
+                    if (label.get(Integer.toString(i)) > 0) {
+                        int distance = this.dist(i, Integer.parseInt(o));
                         if (minDist > distance) {
                             minDist = distance;
                         }
@@ -293,9 +301,9 @@ public class HCNN {
     }
 
     //TODO this will have to return 2 Sets, implement custom class to return 2 sets.
-    private ClustersAndOutliers initializeClustering(Set<Integer> indexes) {
+    private ClustersAndOutliers initializeClustering() {
         // initializing
-        int nOfIndexes = indexes.size();
+        int nOfIndexes = this.indexes.size();
         CorePair[] corePairs = new CorePair[nOfIndexes];
         int[] label = new int[nOfIndexes];
         for (int i = 0; i < n; i++) {
@@ -309,11 +317,12 @@ public class HCNN {
         // lines 2-7
         for (int i = 1; i <= nOfIndexes; i++) {
             Set<String> Q = this.knn.get(Integer.toString(i));
-            for (String j : this.knn.get(Integer.toString(i))) {
+            Set<String> tmp = new HashSet<>(this.knn.get(Integer.toString(i)));
+            for (String j : tmp) {
                 Q.addAll(this.rkkn.get(j));
             }
             for (String q : Q) {
-                structSimZ[i][Integer.parseInt(q)] = z(i, Integer.parseInt(q));
+                structSimZ[i - 1][Integer.parseInt(q) - 1] = z(i, Integer.parseInt(q));
             }
         }
         //line 8
@@ -333,7 +342,7 @@ public class HCNN {
         Collections.reverse(pairSims);
 
         // lines 10 to 22
-        for (int m = 1; m <= pairSims.size(); m++) {
+        for (int m = 0; m < pairSims.size(); m++) {
             PairSim pairSim = pairSims.get(m);
             int i = pairSim.getI();
             int j = pairSim.getJ();
@@ -345,7 +354,7 @@ public class HCNN {
                 Set<String> union = new LinkedHashSet<>(knn.get(Integer.toString(i)));
                 union.addAll(this.knn.get(Integer.toString(j)));
                 for (String u : union) {
-                    int ui = Integer.parseInt(u);
+                    int ui = Integer.parseInt(u) - 1;
                     if (label[ui] == 0) {
                         label[ui] = last;
                     }
@@ -374,7 +383,12 @@ public class HCNN {
         }
         //line 23-28
         Map<String, Set<String>> clusters = new HashMap<>();
-        for (int i : indexes) {
+        for (int index : this.indexes) {
+            int i = index - 1;
+            clusters.putIfAbsent(Integer.toString(i), new LinkedHashSet<>());
+        }
+        for (int index : this.indexes) {
+            int i = index - 1;
             if (label[i] > 0) {
                 clusters.get(Integer.toString(label[i])).add(Integer.toString(i));
             }
@@ -391,7 +405,7 @@ public class HCNN {
         Set<String> intersection = new LinkedHashSet<>(this.knn.get(Integer.toString(i)));
         intersection.retainAll(this.knn.get(Integer.toString(j)));
 
-        Set<String> union = new LinkedHashSet<>(knn.get(i));
+        Set<String> union = new LinkedHashSet<>(this.knn.get(Integer.toString(i)));
         union.addAll(this.knn.get(Integer.toString(j)));
 
         return intersection.size() / union.size();
