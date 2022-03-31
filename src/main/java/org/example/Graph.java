@@ -40,7 +40,7 @@ public class Graph {
     }
 
     public Map<Vertex, Set<Vertex>> getVertices() {
-        return vertices;
+        return this.vertices;
     }
 
     public Set<Vertex> getEdges(String label) {
