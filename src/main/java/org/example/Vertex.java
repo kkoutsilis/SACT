@@ -3,20 +3,20 @@ package org.example;
 import java.util.Objects;
 
 public class Vertex {
-    private String label;
+    private int label;
 
     public Vertex() {
     }
 
-    public Vertex(String label) {
+    public Vertex(int label) {
         this.label = label;
     }
 
-    public String getLabel() {
+    public int getLabel() {
         return label;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(int label) {
         this.label = label;
     }
 
@@ -32,7 +32,7 @@ public class Vertex {
         if (this == o) return true;
         if (!(o instanceof Vertex)) return false;
         Vertex vertex = (Vertex) o;
-        return Objects.equals(getLabel(), vertex.getLabel());
+        return getLabel() == vertex.getLabel();
     }
 
     @Override
