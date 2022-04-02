@@ -7,12 +7,27 @@ public class App {
 
         Graph graph = testGraph3();
         Map<Vertex,Set<Vertex>> knnRes = knn(3,graph);
-        knnRes.forEach((vertex, neigbours) -> {
+        System.out.println("--------KNN---------");
+        knnRes.forEach((vertex, neighbours) -> {
             System.out.print(vertex.getLabel() + " -> ");
-            neigbours.forEach(v -> System.out.print(v.getLabel() + " "));
+            neighbours.forEach(v -> System.out.print(v.getLabel() + " "));
             System.out.println();
         });
-        }
+        Map<Vertex,Set<Vertex>> rknnRes = rknn(knnRes);
+        System.out.println("--------rKNN---------");
+        rknnRes.forEach((vertex, neighbours) -> {
+            System.out.print(vertex.getLabel() + " -> ");
+            neighbours.forEach(v -> System.out.print(v.getLabel() + " "));
+            System.out.println();
+        });
+        Map<Vertex,Set<Vertex>> mknnRes = mknn(knnRes,rknnRes);
+        System.out.println("--------mKNN---------");
+        mknnRes.forEach((vertex, neighbours) -> {
+            System.out.print(vertex.getLabel() + " -> ");
+            neighbours.forEach(v -> System.out.print(v.getLabel() + " "));
+            System.out.println();
+        });
+    }
 
 
     // return the k nearest neighbours for each vertex of a graph
@@ -41,12 +56,12 @@ public class App {
     }
 
     // reverse nearest neighbours of knn
-    public static Map<Integer, Set<Integer>> rknn(Map<Integer, Set<Integer>> knn) {
-        Map<Integer, Set<Integer>> reverseNearestNeighbours = new HashMap<>();
-        Set<Integer> D = knn.keySet();
-        for (Integer i : D) {
+    public static Map<Vertex, Set<Vertex>> rknn(Map<Vertex, Set<Vertex>> knn) {
+        Map<Vertex, Set<Vertex>> reverseNearestNeighbours = new HashMap<>();
+        Set<Vertex> D = knn.keySet();
+        for (Vertex i : D) {
             reverseNearestNeighbours.put(i, new LinkedHashSet<>());
-            for (Integer j : D) {
+            for (Vertex j : D) {
                 if (knn.get(j).contains(i)) {
                     reverseNearestNeighbours.get(i).add(j);
                 }
@@ -55,11 +70,11 @@ public class App {
         return reverseNearestNeighbours;
     }
 
-    public static Map<Integer, Set<Integer>> mknn(Map<Integer, Set<Integer>> knn, Map<Integer, Set<String>> rknn) {
-        Map<Integer, Set<Integer>> mutualNearestNeighbours = new HashMap<>();
-        Set<Integer> D = knn.keySet();
-        for (Integer i : D) {
-            Set<Integer> intersection = new LinkedHashSet<>(knn.get(i));
+    public static Map<Vertex, Set<Vertex>> mknn(Map<Vertex, Set<Vertex>> knn, Map<Vertex, Set<Vertex>> rknn) {
+        Map<Vertex, Set<Vertex>> mutualNearestNeighbours = new HashMap<>();
+        Set<Vertex> D = knn.keySet();
+        for (Vertex i : D) {
+            Set<Vertex> intersection = new LinkedHashSet<>(knn.get(i));
             intersection.retainAll(rknn.get(i));
             mutualNearestNeighbours.put(i, intersection);
         }
