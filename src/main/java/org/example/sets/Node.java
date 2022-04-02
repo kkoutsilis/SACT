@@ -1,23 +1,25 @@
 package org.example.sets;
 
+import org.example.Vertex;
+
 import java.util.Set;
 
 public class Node {
-    private Set<String> data;
+    private Set<Vertex> data;
     private Node next;
     private Representative representative;
 
-    public Node(Set<String> data) {
+    public Node(Set<Vertex> data) {
         this.next = null;
         this.representative = null;
         this.data = data;
     }
 
-    public Set<String> getData() {
+    public Set<Vertex> getData() {
         return data;
     }
 
-    public void setData(Set<String> data) {
+    public void setData(Set<Vertex> data) {
         this.data = data;
     }
 
