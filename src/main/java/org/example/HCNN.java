@@ -221,7 +221,6 @@ public class HCNN {
     }
 
     public List<Set<Vertex>> fit() throws Exception {
-        System.out.println("fit started");
         ClustersAndOutliers clustersAndOutliers = this.initializeClustering();
         List<Set<Vertex>> C = clustersAndOutliers.getClusters();
         Set<Vertex> D = clustersAndOutliers.getOutliers();
@@ -229,7 +228,7 @@ public class HCNN {
         while (C.size() > this.n) {
             int L = C.size();
             // line 4
-            float tmax = Float.MIN_VALUE;
+            float tmax = 0;
             for (int i = 0; i < L; i++) {
                 for (int j = i + 1; j < L; j++) {
                     float similarity = sim(C.get(i), C.get(j));
@@ -240,10 +239,8 @@ public class HCNN {
             }
             // line 5
             if (tmax == 0) {
-                System.out.println("ended from tmax==0");
                 break;
             }
-
             // line 7
             Set<MSP> msp = new LinkedHashSet<>();
             for (int i = 0; i < L; i++) {
@@ -256,15 +253,17 @@ public class HCNN {
             }
             // line 8-10
             DisjointSets DS = new DisjointSets();
-            for (int i = 1; i < L; i++) {
-                DS.makeSet(C.get(i));
+            for (Set<Vertex> vertices : C) {
+                DS.makeSet(vertices);
             }
             // line 11-12
             for (MSP msp1 : msp) {
-                DS.union(C.get(msp1.getI()), C.get(msp1.getJ()));
+                int i = msp1.getI();
+                int j = msp1.getJ();
+                DS.union(C.get(i), C.get(j));
             }
             // line 13-16
-            for (int i = 1; i < L; i++) {
+            for (int i = 0; i < L; i++) {
                 int index = DS.findSet(C.get(i));
                 Set<Vertex> repr = DS.getRepresentative(index).getHead().getData(); // TODO refactor
                 if (repr != C.get(i)) {
@@ -272,7 +271,6 @@ public class HCNN {
                     C.set(i, Collections.emptySet());
                 }
             }
-
             // line 17-20
             List<Set<Vertex>> Ctemp = new ArrayList<>(C);
             C = new ArrayList<>();
@@ -283,25 +281,24 @@ public class HCNN {
             }
         }
         C = assignOutliers(C, D);
-        System.out.println("fit ended");
 
         return C;
     }
 
     // TODO FIX
     public List<Set<Vertex>> assignOutliers(List<Set<Vertex>> clusters, Set<Vertex> outliers) {
-        System.out.println("assignOutliers started");
-        List<Float> label = new ArrayList<>();
-        for (int i = 0; i < this.indexes.size(); i++) {
-            label.add((float) 0);
+        float[] label = new float[this.indexes.size() + 1];
+
+        for (int i = 0; i <= this.indexes.size(); i++) {
+            label[i] = 0;
         }
         for (int i = 0; i < clusters.size(); i++) {
             for (Vertex j : clusters.get(i)) {
-                label.add(j.getLabel(), (float) i);
+                label[j.getLabel()] = i;
             }
         }
         for (Vertex o : outliers) {
-            float t = o.getLabel(); // wrong
+            float t = o.getLabel();
             if (!this.knn.get(o).isEmpty()) {
                 float minStractSim = Float.MAX_VALUE;
                 for (Vertex i : this.knn.get(o)) {
@@ -312,27 +309,31 @@ public class HCNN {
                 }
                 t = minStractSim;
             }
-            if (label.get((int) t) == 0) {
+            //TODO PROBLEM HERE, if outlier has no edges, there is no distance
+            if (label[(int) t] == 0) {
                 int minDist = Integer.MAX_VALUE;
                 for (int i : indexes) {
-                    if (label.get(i) > 0) {
+                    if (label[i] > 0) {
                         int distance = this.dist(i, o.getLabel());
                         if (minDist > distance) {
                             minDist = distance;
                         }
                     }
                 }
-                t = minDist;
+                // added by me
+                if (minDist == Integer.MAX_VALUE) {
+                    t = clusters.size() - 1; // add to last cluster
+                } else {
+                    t = minDist;
+                }
             }
-            label.add(o.getLabel(), label.get((int) t));
-            clusters.get(Math.round(label.get(o.getLabel()))).add(o);
+            label[o.getLabel()] = label[(int) t];
+            clusters.get((int) label[o.getLabel()]).add(o);
         }
-        System.out.println("assignOutliers ended");
         return clusters;
     }
 
     public ClustersAndOutliers initializeClustering() {
-        System.out.println("initialize clusters started");
         // initializing
         int nOfIndexes = this.indexes.size();
         CorePair[] corePairs = new CorePair[nOfIndexes];
@@ -372,6 +373,7 @@ public class HCNN {
         // sort in descending order according to the similarity between data
         pairSims.sort(Comparator.comparing(PairSim::getSimilarity));
         Collections.reverse(pairSims);
+
         for (PairSim pairSim : pairSims) {
             int i = pairSim.getI() - 1;
             int j = pairSim.getJ() - 1;
@@ -431,7 +433,6 @@ public class HCNN {
             }
         }
         clusters.removeIf(Set::isEmpty); // Not the best but it works for now.
-        System.out.println("initialize clusters ended");
         return new ClustersAndOutliers(clusters, outliers);
 
     }

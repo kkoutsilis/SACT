@@ -1,7 +1,7 @@
 package org.example;
 
 import java.util.*;
-import org.example.Vertex;
+
 
 public class App {
     public static void main(String[] args) throws Exception {
@@ -11,9 +11,14 @@ public class App {
         Map<Vertex, Set<Vertex>> rknnRes = rknn(knnRes);
         Map<Vertex, Set<Vertex>> mknnRes = mknn(knnRes, rknnRes);
 
-        HCNN algo = new HCNN(graph, 2, knnRes, rknnRes);
-//        System.out.println(algo.fit());
-        System.out.println(algo.initializeClustering());
+        HCNN algo = new HCNN(graph, 5, knnRes, rknnRes);
+        List<Set<Vertex>> res = algo.fit();
+        for (Set<Vertex> s : res){
+            System.out.println("------------------------------CLUSTER------------------------------");
+            System.out.println(s);
+            System.out.println();
+        }
+
     }
 
     // return the k nearest neighbours for each vertex of a graph
@@ -204,7 +209,7 @@ public class App {
         }
         Random rand = new Random();
         for (Vertex v : graph.getVertices().keySet()) {
-            for (int i = 1; i < 26; i++) {
+            for (int i = 1; i < 6; i++) {
                 int y = rand.nextInt(100 - 1 + 1) + 1;
                 graph.addEdge(v.getLabel(), y);
             }
@@ -220,7 +225,7 @@ public class App {
         }
         Random rand = new Random();
         for (Vertex v : graph.getVertices().keySet()) {
-            for (int i = 1; i < 11; i++) {
+            for (int i = 1; i < 6; i++) {
                 int y = rand.nextInt(25 - 1 + 1) + 1;
                 graph.addEdge(v.getLabel(), y);
             }
