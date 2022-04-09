@@ -324,14 +324,13 @@ public class HCNN {
                 }
                 t = minDist;
             }
-            label.add(o.getLabel(), t);
+            label.add(o.getLabel(), label.get((int) t));
             clusters.get(Math.round(label.get(o.getLabel()))).add(o);
         }
         System.out.println("assignOutliers ended");
         return clusters;
     }
 
-    // TODO FIX THIS IS WRONG
     public ClustersAndOutliers initializeClustering() {
         System.out.println("initialize clusters started");
         // initializing
@@ -431,7 +430,7 @@ public class HCNN {
                 outliers.add(vlabelI);
             }
         }
-        clusters.removeIf(Set::isEmpty);
+        clusters.removeIf(Set::isEmpty); // Not the best but it works for now.
         System.out.println("initialize clusters ended");
         return new ClustersAndOutliers(clusters, outliers);
 

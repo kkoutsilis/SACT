@@ -1,34 +1,20 @@
 package org.example;
 
 import java.util.*;
+import org.example.Vertex;
 
 public class App {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        Graph graph = testGraph3();
-        Map<Vertex,Set<Vertex>> knnRes = knn(3,graph);
-        System.out.println("--------KNN---------");
-        knnRes.forEach((vertex, neighbours) -> {
-            System.out.print(vertex.getLabel() + " -> ");
-            neighbours.forEach(v -> System.out.print(v.getLabel() + " "));
-            System.out.println();
-        });
-        Map<Vertex,Set<Vertex>> rknnRes = rknn(knnRes);
-        System.out.println("--------rKNN---------");
-        rknnRes.forEach((vertex, neighbours) -> {
-            System.out.print(vertex.getLabel() + " -> ");
-            neighbours.forEach(v -> System.out.print(v.getLabel() + " "));
-            System.out.println();
-        });
-        Map<Vertex,Set<Vertex>> mknnRes = mknn(knnRes,rknnRes);
-        System.out.println("--------mKNN---------");
-        mknnRes.forEach((vertex, neighbours) -> {
-            System.out.print(vertex.getLabel() + " -> ");
-            neighbours.forEach(v -> System.out.print(v.getLabel() + " "));
-            System.out.println();
-        });
+        Graph graph = testGraph7();
+        Map<Vertex, Set<Vertex>> knnRes = knn(3, graph);
+        Map<Vertex, Set<Vertex>> rknnRes = rknn(knnRes);
+        Map<Vertex, Set<Vertex>> mknnRes = mknn(knnRes, rknnRes);
+
+        HCNN algo = new HCNN(graph, 2, knnRes, rknnRes);
+//        System.out.println(algo.fit());
+        System.out.println(algo.initializeClustering());
     }
-
 
     // return the k nearest neighbours for each vertex of a graph
     public static Map<Vertex, Set<Vertex>> knn(int k, Graph graph) {
@@ -80,7 +66,6 @@ public class App {
         }
         return mutualNearestNeighbours;
     }
-
 
     public static Graph testGraph1() {
         Graph graph = new Graph();
@@ -136,7 +121,6 @@ public class App {
         graph.addVertex(9);
         graph.addVertex(10);
 
-
         graph.addEdge(1, 2);
         graph.addEdge(1, 6);
         graph.addEdge(1, 8);
@@ -148,7 +132,6 @@ public class App {
 
         graph.addEdge(3, 10);
         graph.addEdge(3, 4);
-
 
         graph.addEdge(4, 2);
 
@@ -211,6 +194,72 @@ public class App {
         graph.addEdge(6, 4);
         graph.addEdge(6, 5);
         graph.addEdge(6, 1);
+        return graph;
+    }
+
+    public static Graph testGraph5() {
+        Graph graph = new Graph();
+        for (int i = 1; i < 101; i++) {
+            graph.addVertex(i);
+        }
+        Random rand = new Random();
+        for (Vertex v : graph.getVertices().keySet()) {
+            for (int i = 1; i < 26; i++) {
+                int y = rand.nextInt(100 - 1 + 1) + 1;
+                graph.addEdge(v.getLabel(), y);
+            }
+        }
+
+        return graph;
+    }
+
+    public static Graph testGraph6() {
+        Graph graph = new Graph();
+        for (int i = 1; i < 26; i++) {
+            graph.addVertex(i);
+        }
+        Random rand = new Random();
+        for (Vertex v : graph.getVertices().keySet()) {
+            for (int i = 1; i < 11; i++) {
+                int y = rand.nextInt(25 - 1 + 1) + 1;
+                graph.addEdge(v.getLabel(), y);
+            }
+        }
+
+        return graph;
+    }
+    public static Graph testGraph7() {
+        Graph graph = new Graph();
+        graph.addVertex(1);
+        graph.addVertex(2);
+        graph.addVertex(3);
+        graph.addVertex(4);
+        graph.addVertex(5);
+        graph.addVertex(6);
+        graph.addVertex(7);
+        graph.addVertex(8);
+        graph.addVertex(9);
+        graph.addVertex(10);
+
+        graph.addEdge(1, 2);
+        graph.addEdge(1, 3);
+
+        graph.addEdge(2, 3);
+
+        graph.addEdge(3, 1);
+
+        graph.addEdge(5, 6);
+        graph.addEdge(5, 7);
+
+        graph.addEdge(6, 7);
+        graph.addEdge(6,8);
+        graph.addEdge(6,9);
+
+        graph.addEdge(7, 8);
+        graph.addEdge(7,9);
+
+        graph.addEdge(9, 6);
+
         return graph;
     }
 }
