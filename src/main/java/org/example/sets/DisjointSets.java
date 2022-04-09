@@ -1,6 +1,8 @@
 package org.example.sets;
 
 
+import org.example.Vertex;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +14,7 @@ public class DisjointSets {
         this.sets = new ArrayList<>();
     }
 
-    public int makeSet(Set<String> value) throws Exception {
+    public int makeSet(Set<Vertex> value) throws Exception {
         if (this.findSet(value) != -1) {
             throw new Exception("Value " + value + " already exists in set");
         }
@@ -25,7 +27,7 @@ public class DisjointSets {
         return findSet(representative.getHead().getData()); //TODO refactor
     }
 
-    public int findSet(Set<String> value) {
+    public int findSet(Set<Vertex> value) {
         for (int i = 0; i < this.sets.size(); i++) {
             Node searchNode = this.sets.get(i).getHead();
             while (searchNode != null) {
@@ -38,7 +40,7 @@ public class DisjointSets {
         return -1;
     }
 
-    public int union(Set<String> valueX, Set<String> valueY) throws Exception {
+    public int union(Set<Vertex> valueX, Set<Vertex> valueY) throws Exception {
         int indexX = findSet(valueX);
         int indexY = findSet(valueY);
         if (indexX == -1 || indexY == -1) {
