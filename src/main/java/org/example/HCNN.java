@@ -25,7 +25,6 @@ class CorePair {
         return this.j;
     }
 
-
     public void setI(int i) {
         this.i = i;
     }
@@ -41,8 +40,10 @@ class CorePair {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CorePair)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof CorePair))
+            return false;
         CorePair corePair = (CorePair) o;
         return getI() == corePair.getI() && getJ() == corePair.getJ();
     }
@@ -51,17 +52,25 @@ class CorePair {
     public int hashCode() {
         return Objects.hash(getI(), getJ());
     }
+
+    @Override
+    public String toString() {
+        return "CorePair{" +
+                "i=" + i +
+                ", j=" + j +
+                '}';
+    }
 }
 
 class PairSim {
     private int i;
     private int j;
-    private int similarity;
+    private float similarity;
 
     public PairSim() {
     }
 
-    public PairSim(int i, int j, int similarity) {
+    public PairSim(int i, int j, float similarity) {
         this.i = i;
         this.j = j;
         this.similarity = similarity;
@@ -83,15 +92,15 @@ class PairSim {
         this.j = j;
     }
 
-    public int getSimilarity() {
+    public float getSimilarity() {
         return similarity;
     }
 
-    public void setSimilarity(int similarity) {
+    public void setSimilarity(float similarity) {
         this.similarity = similarity;
     }
 
-    public void setPairSim(int i, int j, int similarity) {
+    public void setPairSim(int i, int j, float similarity) {
         this.setI(i);
         this.setJ(j);
         this.setSimilarity(similarity);
@@ -99,8 +108,10 @@ class PairSim {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PairSim)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof PairSim))
+            return false;
         PairSim pairSim = (PairSim) o;
         return getI() == pairSim.getI() && getJ() == pairSim.getJ() && getSimilarity() == pairSim.getSimilarity();
     }
@@ -108,6 +119,15 @@ class PairSim {
     @Override
     public int hashCode() {
         return Objects.hash(getI(), getJ(), getSimilarity());
+    }
+
+    @Override
+    public String toString() {
+        return "PairSim{" +
+                "i=" + i +
+                ", j=" + j +
+                ", similarity=" + similarity +
+                '}';
     }
 }
 
@@ -137,6 +157,14 @@ class ClustersAndOutliers {
 
     public void setOutliers(Set<Vertex> outliers) {
         this.outliers = outliers;
+    }
+
+    @Override
+    public String toString() {
+        return "ClustersAndOutliers{" +
+                "clusters=" + clusters +
+                ", outliers=" + outliers +
+                '}';
     }
 }
 
@@ -193,7 +221,7 @@ public class HCNN {
     }
 
     public List<Set<Vertex>> fit() throws Exception {
-
+        System.out.println("fit started");
         ClustersAndOutliers clustersAndOutliers = this.initializeClustering();
         List<Set<Vertex>> C = clustersAndOutliers.getClusters();
         Set<Vertex> D = clustersAndOutliers.getOutliers();
@@ -201,10 +229,10 @@ public class HCNN {
         while (C.size() > this.n) {
             int L = C.size();
             // line 4
-            int tmax = Integer.MIN_VALUE;
-            for (int i = 0; i <= L; i++) {
-                for (int j = i + 1; j <= L; j++) {
-                    int similarity = sim(C.get(i), C.get(j));
+            float tmax = Float.MIN_VALUE;
+            for (int i = 0; i < L; i++) {
+                for (int j = i + 1; j < L; j++) {
+                    float similarity = sim(C.get(i), C.get(j));
                     if (tmax < similarity) {
                         tmax = similarity;
                     }
@@ -212,6 +240,7 @@ public class HCNN {
             }
             // line 5
             if (tmax == 0) {
+                System.out.println("ended from tmax==0");
                 break;
             }
 
@@ -219,7 +248,7 @@ public class HCNN {
             Set<MSP> msp = new LinkedHashSet<>();
             for (int i = 0; i < L; i++) {
                 for (int j = i + 1; j < L; j++) {
-                    int similarity = sim(C.get(i), C.get(j));
+                    float similarity = sim(C.get(i), C.get(j));
                     if (similarity == tmax) {
                         msp.add(new MSP(i, j));
                     }
@@ -227,15 +256,15 @@ public class HCNN {
             }
             // line 8-10
             DisjointSets DS = new DisjointSets();
-            for (int i = 1; i <= L; i++) {
+            for (int i = 1; i < L; i++) {
                 DS.makeSet(C.get(i));
             }
-            //line 11-12
+            // line 11-12
             for (MSP msp1 : msp) {
                 DS.union(C.get(msp1.getI()), C.get(msp1.getJ()));
             }
             // line 13-16
-            for (int i = 1; i <= L; i++) {
+            for (int i = 1; i < L; i++) {
                 int index = DS.findSet(C.get(i));
                 Set<Vertex> repr = DS.getRepresentative(index).getHead().getData(); // TODO refactor
                 if (repr != C.get(i)) {
@@ -254,34 +283,39 @@ public class HCNN {
             }
         }
         C = assignOutliers(C, D);
+        System.out.println("fit ended");
 
         return C;
     }
 
-    // TODO types will probably have to change.
-    private List<Set<Vertex>> assignOutliers(List<Set<Vertex>> clusters, Set<Vertex> outliers) {
-        int[] label = new int[clusters.size()];
+    // TODO FIX
+    public List<Set<Vertex>> assignOutliers(List<Set<Vertex>> clusters, Set<Vertex> outliers) {
+        System.out.println("assignOutliers started");
+        List<Float> label = new ArrayList<>();
+        for (int i = 0; i < this.indexes.size(); i++) {
+            label.add((float) 0);
+        }
         for (int i = 0; i < clusters.size(); i++) {
             for (Vertex j : clusters.get(i)) {
-                label[j.getLabel()] = i;
+                label.add(j.getLabel(), (float) i);
             }
         }
         for (Vertex o : outliers) {
-            int t = o.getLabel(); // wrong
+            float t = o.getLabel(); // wrong
             if (!this.knn.get(o).isEmpty()) {
-                int minStractSim = Integer.MAX_VALUE;
+                float minStractSim = Float.MAX_VALUE;
                 for (Vertex i : this.knn.get(o)) {
-                    int stractSim = z(o, i);
+                    float stractSim = z(o, i);
                     if (minStractSim > stractSim) {
                         minStractSim = stractSim;
                     }
                 }
                 t = minStractSim;
             }
-            if (label[t] == 0) {
+            if (label.get((int) t) == 0) {
                 int minDist = Integer.MAX_VALUE;
                 for (int i : indexes) {
-                    if (label[i] > 0) {
+                    if (label.get(i) > 0) {
                         int distance = this.dist(i, o.getLabel());
                         if (minDist > distance) {
                             minDist = distance;
@@ -290,24 +324,27 @@ public class HCNN {
                 }
                 t = minDist;
             }
-            label[o.getLabel()] = t;
-            clusters.get(label[o.getLabel()]).add(o);
+            label.add(o.getLabel(), t);
+            clusters.get(Math.round(label.get(o.getLabel()))).add(o);
         }
+        System.out.println("assignOutliers ended");
         return clusters;
     }
 
-    private ClustersAndOutliers initializeClustering() {
+    // TODO FIX THIS IS WRONG
+    public ClustersAndOutliers initializeClustering() {
+        System.out.println("initialize clusters started");
         // initializing
         int nOfIndexes = this.indexes.size();
         CorePair[] corePairs = new CorePair[nOfIndexes];
         int[] label = new int[nOfIndexes];
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < nOfIndexes; i++) {
             corePairs[i] = new CorePair(0, 0);
             label[i] = 0;
         }
         int last = 0;
         Set<Vertex> outliers = new LinkedHashSet<>();
-        int[][] structSimZ = new int[nOfIndexes+1][nOfIndexes+1];
+        float[][] structSimZ = new float[nOfIndexes][nOfIndexes];
 
         // lines 2-7
         for (Vertex i : this.G) {
@@ -317,32 +354,28 @@ public class HCNN {
                 Q.addAll(this.rkkn.get(j));
             }
             for (Vertex q : Q) {
-                structSimZ[i.getLabel() ][q.getLabel() ] = z(i, q);
+                structSimZ[i.getLabel() - 1][q.getLabel() - 1] = z(i, q);
             }
         }
 
-        //line 8
+        // line 8
         List<PairSim> pairSims = new ArrayList<>();
         for (int i = 0; i < nOfIndexes; i++) {
             for (int j = i + 1; j < nOfIndexes; j++) {
                 Vertex vI = this.G.get(i);
                 Vertex vJ = this.G.get(j);
-                int structSim = z(vI, vJ);
+                float structSim = z(vI, vJ);
                 if (structSim > 0) {
-                    pairSims.add(new PairSim(i, j, structSim));
+                    pairSims.add(new PairSim(vI.getLabel(), vJ.getLabel(), structSim));
                 }
             }
         }
         // sort in descending order according to the similarity between data
-        //TODO this probably does not work, if it does need fixing.
-        Collections.sort(pairSims, Comparator.comparing(PairSim::getSimilarity));
+        pairSims.sort(Comparator.comparing(PairSim::getSimilarity));
         Collections.reverse(pairSims);
-
-        // lines 10 to 22
-        for (int m = 0; m < pairSims.size(); m++) {
-            PairSim pairSim = pairSims.get(m);
-            int i = pairSim.getI();
-            int j = pairSim.getJ();
+        for (PairSim pairSim : pairSims) {
+            int i = pairSim.getI() - 1;
+            int j = pairSim.getJ() - 1;
             if (label[i] == 0 && label[j] == 0) {
                 last += 1;
                 label[i] = label[j] = last;// Not sure about that, line 14
@@ -362,34 +395,35 @@ public class HCNN {
                         int k = corePair.getJ();
 
                         Vertex vuI = this.G.get(ui);
-                        int max = z(vuI, vI);
-                        int temp = z(vuI, vJ);
+                        float max = z(vuI, vI);
+                        float temp = z(vuI, vJ);
                         if (max < temp) {
                             max = temp;
                         }
                         Vertex vH = this.G.get(h);
                         Vertex vK = this.G.get(k);
 
-                        int min = z(vuI, vH);
+                        float min = z(vuI, vH);
                         temp = z(vuI, vK);
                         if (min > temp) {
                             min = temp;
                         }
 
                         if (max > min) {
-                            label[ui] = max;
+                            label[ui] = last;
                         }
                     }
                 }
             }
         }
-        //line 23-28
+
+        // line 23-28
         List<Set<Vertex>> clusters = new ArrayList<>();
         for (int i : this.indexes) {
             clusters.add(new HashSet<>());
         }
         for (int i : this.indexes) {
-            Vertex vlabelI = this.G.get(label[i]);
+            Vertex vlabelI = this.G.get(i);
             if (label[i] > 0) {
                 clusters.get(label[i]).add(vlabelI);
             }
@@ -397,22 +431,22 @@ public class HCNN {
                 outliers.add(vlabelI);
             }
         }
+        clusters.removeIf(Set::isEmpty);
+        System.out.println("initialize clusters ended");
         return new ClustersAndOutliers(clusters, outliers);
 
     }
 
-    private int z(Vertex i, Vertex j) {
+    private float z(Vertex i, Vertex j) {
         Set<Vertex> intersection = new LinkedHashSet<>(this.knn.get(i));
         intersection.retainAll(this.knn.get(j));
 
         Set<Vertex> union = new LinkedHashSet<>(this.knn.get(i));
         union.addAll(this.knn.get(j));
 
-        return intersection.size() / union.size();
-
+        return (float) intersection.size() / (float) union.size();
     }
 
-    // TODO types will probably have to chage.
     private int conn(Set<Vertex> clusterA, Set<Vertex> clusterB) {
         int connSum = 0;
         for (Vertex a : clusterA) {
@@ -429,7 +463,6 @@ public class HCNN {
         return connSum;
     }
 
-    // TODO types will probably have to chage.
     private int link(Set<Vertex> clusterA, Set<Vertex> clusterB) {
         Set<Set<Vertex>> linkSet = new LinkedHashSet<>();
         for (Vertex a : clusterA) {
@@ -442,9 +475,10 @@ public class HCNN {
         return linkSet.size();
     }
 
-    // TODO types will probably have to chage.
-    private int sim(Set<Vertex> clusterA, Set<Vertex> clusterB) {
-        return (conn(clusterA, clusterB) / (clusterA.size() * clusterB.size())) * (link(clusterA, clusterB) / clusterA.size()) * (link(clusterB, clusterA) / clusterB.size());
+    private float sim(Set<Vertex> clusterA, Set<Vertex> clusterB) {
+        return ((float) conn(clusterA, clusterB) / (float) (clusterA.size() * clusterB.size()))
+                * ((float) link(clusterA, clusterB) / (float) clusterA.size())
+                * ((float) link(clusterB, clusterA) / (float) clusterB.size());
     }
 
     public int dist(int source, int dest) {
