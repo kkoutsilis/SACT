@@ -285,10 +285,9 @@ public class HCNN {
         return C;
     }
 
-    // TODO FIX
-    public List<Set<Vertex>> assignOutliers(List<Set<Vertex>> clusters, Set<Vertex> outliers) {
+    private List<Set<Vertex>> assignOutliers(List<Set<Vertex>> clusters, Set<Vertex> outliers) {
         float[] label = new float[this.indexes.size() + 1];
-
+        Set<Vertex> loners = new HashSet<>();
         for (int i = 0; i <= this.indexes.size(); i++) {
             label[i] = 0;
         }
@@ -309,7 +308,6 @@ public class HCNN {
                 }
                 t = minStractSim;
             }
-            //TODO PROBLEM HERE, if outlier has no edges, there is no distance
             if (label[(int) t] == 0) {
                 int minDist = Integer.MAX_VALUE;
                 for (int i : indexes) {
@@ -320,20 +318,21 @@ public class HCNN {
                         }
                     }
                 }
-                // added by me
-                if (minDist == Integer.MAX_VALUE) {
-                    t = clusters.size() - 1; // add to last cluster
-                } else {
-                    t = minDist;
-                }
+                t = minDist;
             }
-            label[o.getLabel()] = label[(int) t];
-            clusters.get((int) label[o.getLabel()]).add(o);
+
+            if (t == Integer.MAX_VALUE) {
+                loners.add(o);
+            } else {
+                label[o.getLabel()] = label[(int) t];
+                clusters.get((int) label[o.getLabel()]).add(o);
+            }
         }
+        clusters.add(loners);
         return clusters;
     }
 
-    public ClustersAndOutliers initializeClustering() {
+    private ClustersAndOutliers initializeClustering() {
         // initializing
         int nOfIndexes = this.indexes.size();
         CorePair[] corePairs = new CorePair[nOfIndexes];
@@ -424,12 +423,12 @@ public class HCNN {
             clusters.add(new HashSet<>());
         }
         for (int i : this.indexes) {
-            Vertex vlabelI = this.G.get(i);
+            Vertex vI = this.G.get(i);
             if (label[i] > 0) {
-                clusters.get(label[i]).add(vlabelI);
+                clusters.get(label[i]).add(vI);
             }
             if (label[i] == 0) {
-                outliers.add(vlabelI);
+                outliers.add(vI);
             }
         }
         clusters.removeIf(Set::isEmpty); // Not the best but it works for now.
@@ -481,7 +480,7 @@ public class HCNN {
                 * ((float) link(clusterB, clusterA) / (float) clusterB.size());
     }
 
-    public int dist(int source, int dest) {
+    private int dist(int source, int dest) {
         int nOfVertices = this.graph.getVertices().size() + 1;
         // create a min-heap and push source node having distance 0
         PriorityQueue<Vertex> minHeap;
