@@ -4,8 +4,16 @@ import java.util.Objects;
 
 public class Vertex {
     private int label;
+    private String schema;
+    private String type;
 
     public Vertex() {
+    }
+
+    public Vertex(int label, String schema, String type) {
+        this.label = label;
+        this.schema = schema;
+        this.type = type;
     }
 
     public Vertex(int label) {
@@ -20,11 +28,25 @@ public class Vertex {
         this.label = label;
     }
 
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
-        return "Vertex{" +
-                "label='" + label + '\'' +
-                '}';
+        return "Vertex{" + "label=" + label + ", schema='" + schema + '\'' + ", type='" + type + '\'' + '}';
     }
 
     @Override

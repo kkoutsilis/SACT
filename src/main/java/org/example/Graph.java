@@ -25,8 +25,8 @@ public class Graph {
                 .build()) {
             List<String[]> r = reader.readAll();
             for (String[] row : r) {
-                Vertex v1 = new Vertex(Integer.parseInt(row[2]));
-                Vertex v2 = new Vertex(Integer.parseInt(row[5]));
+                Vertex v1 = new Vertex(Integer.parseInt(row[2]), row[1], row[3]);
+                Vertex v2 = new Vertex(Integer.parseInt(row[5]), row[4], row[6]);
                 this.addVertex(v1);
                 this.addVertex(v2);
                 this.addEdge(v1, v2);
