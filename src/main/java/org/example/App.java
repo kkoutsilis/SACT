@@ -6,14 +6,15 @@ import java.util.*;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        Graph graph = testGraph7();
+        Graph graph = new Graph();
+        graph.parseCSV("CSVs/test.csv");
         Map<Vertex, Set<Vertex>> knnRes = knn(3, graph);
         Map<Vertex, Set<Vertex>> rknnRes = rknn(knnRes);
         Map<Vertex, Set<Vertex>> mknnRes = mknn(knnRes, rknnRes);
 
         HCNN algo = new HCNN(graph, 5, knnRes, rknnRes);
         List<Set<Vertex>> res = algo.fit();
-        for (Set<Vertex> s : res){
+        for (Set<Vertex> s : res) {
             System.out.println("------------------------------CLUSTER------------------------------");
             System.out.println(s);
             System.out.println();
@@ -233,6 +234,7 @@ public class App {
 
         return graph;
     }
+
     public static Graph testGraph7() {
         Graph graph = new Graph();
         graph.addVertex(1);
@@ -257,11 +259,11 @@ public class App {
         graph.addEdge(5, 7);
 
         graph.addEdge(6, 7);
-        graph.addEdge(6,8);
-        graph.addEdge(6,9);
+        graph.addEdge(6, 8);
+        graph.addEdge(6, 9);
 
         graph.addEdge(7, 8);
-        graph.addEdge(7,9);
+        graph.addEdge(7, 9);
 
         graph.addEdge(9, 6);
 
