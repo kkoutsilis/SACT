@@ -9,3 +9,6 @@ target/
 
 *.drawio
 *.csv
+
+.vscode
+.idea
