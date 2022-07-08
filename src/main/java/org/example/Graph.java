@@ -1,5 +1,11 @@
 package org.example;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
+
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class Graph {
@@ -12,6 +18,23 @@ public class Graph {
 
     public Graph(Map<Vertex, Set<Vertex>> vertices) {
         this.vertices = vertices;
+    }
+
+    public void parseCSV(String path) throws IllegalStateException {
+        try (CSVReader reader = new CSVReaderBuilder(new FileReader(path)).withSkipLines(1)           // skip the first line, header info
+                .build()) {
+            List<String[]> r = reader.readAll();
+            for (String[] row : r) {
+                int v1 = Integer.parseInt(row[2]);
+                int v2 = Integer.parseInt(row[5]);
+                this.addVertex(v1);
+                this.addVertex(v2);
+                this.addEdge(v1, v2);
+
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addVertex(int label) {
@@ -34,8 +57,7 @@ public class Graph {
         Vertex v1 = new Vertex(label1);
         Vertex v2 = new Vertex(label2);
         Set<Vertex> eV1 = vertices.get(v1);
-        if (eV1 != null)
-            eV1.remove(v2);
+        if (eV1 != null) eV1.remove(v2);
 
     }
 
@@ -57,8 +79,6 @@ public class Graph {
 
     @Override
     public String toString() {
-        return "Graph{" +
-                "vertices=" + vertices +
-                '}';
+        return "Graph{" + "vertices=" + vertices + '}';
     }
 }
