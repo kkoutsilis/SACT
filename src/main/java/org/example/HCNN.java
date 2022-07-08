@@ -40,10 +40,8 @@ class CorePair {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof CorePair))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof CorePair)) return false;
         CorePair corePair = (CorePair) o;
         return getI() == corePair.getI() && getJ() == corePair.getJ();
     }
@@ -55,10 +53,7 @@ class CorePair {
 
     @Override
     public String toString() {
-        return "CorePair{" +
-                "i=" + i +
-                ", j=" + j +
-                '}';
+        return "CorePair{" + "i=" + i + ", j=" + j + '}';
     }
 }
 
@@ -108,10 +103,8 @@ class PairSim {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof PairSim))
-            return false;
+        if (this == o) return true;
+        if (!(o instanceof PairSim)) return false;
         PairSim pairSim = (PairSim) o;
         return getI() == pairSim.getI() && getJ() == pairSim.getJ() && getSimilarity() == pairSim.getSimilarity();
     }
@@ -123,11 +116,7 @@ class PairSim {
 
     @Override
     public String toString() {
-        return "PairSim{" +
-                "i=" + i +
-                ", j=" + j +
-                ", similarity=" + similarity +
-                '}';
+        return "PairSim{" + "i=" + i + ", j=" + j + ", similarity=" + similarity + '}';
     }
 }
 
@@ -161,10 +150,7 @@ class ClustersAndOutliers {
 
     @Override
     public String toString() {
-        return "ClustersAndOutliers{" +
-                "clusters=" + clusters +
-                ", outliers=" + outliers +
-                '}';
+        return "ClustersAndOutliers{" + "clusters=" + clusters + ", outliers=" + outliers + '}';
     }
 }
 
@@ -475,9 +461,7 @@ public class HCNN {
     }
 
     private float sim(Set<Vertex> clusterA, Set<Vertex> clusterB) {
-        return ((float) conn(clusterA, clusterB) / (float) (clusterA.size() * clusterB.size()))
-                * ((float) link(clusterA, clusterB) / (float) clusterA.size())
-                * ((float) link(clusterB, clusterA) / (float) clusterB.size());
+        return ((float) conn(clusterA, clusterB) / (float) (clusterA.size() * clusterB.size())) * ((float) link(clusterA, clusterB) / (float) clusterA.size()) * ((float) link(clusterB, clusterA) / (float) clusterB.size());
     }
 
     private int dist(int source, int dest) {
