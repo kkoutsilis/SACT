@@ -1,12 +1,9 @@
 package org.example;
 
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.exceptions.CsvException;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Graph {
     private final Map<Vertex, Set<Vertex>> vertices;
@@ -18,22 +15,6 @@ public class Graph {
 
     public Graph(Map<Vertex, Set<Vertex>> vertices) {
         this.vertices = vertices;
-    }
-
-    public void parseCSV(String path) throws IllegalStateException {
-        try (CSVReader reader = new CSVReaderBuilder(new FileReader(path)).withSkipLines(1)           // skip the first line, header info
-                .build()) {
-            List<String[]> r = reader.readAll();
-            for (String[] row : r) {
-                Vertex v1 = new Vertex(Integer.parseInt(row[2]), row[1], row[3]);
-                Vertex v2 = new Vertex(Integer.parseInt(row[5]), row[4], row[6]);
-                this.addVertex(v1);
-                this.addVertex(v2);
-                this.addEdge(v1, v2);
-            }
-        } catch (IOException | CsvException e) {
-            e.printStackTrace();
-        }
     }
 
     public void addVertex(Vertex vertex) {

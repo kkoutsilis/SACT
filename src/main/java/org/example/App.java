@@ -1,56 +1,21 @@
 package org.example;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
-
-import com.opencsv.CSVWriter;
+import java.util.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
+        Graph graph = CsvHandler.parseCSV("CSVs/test.csv");
 
-        Graph graph = new Graph();
-        graph.parseCSV("CSVs/test.csv");
         Map<Vertex, Set<Vertex>> knnRes = knn(5, graph);
         Map<Vertex, Set<Vertex>> rknnRes = rknn(knnRes);
         Map<Vertex, Set<Vertex>> mknnRes = mknn(knnRes, rknnRes);
 
         HCNN algo = new HCNN(graph, 10, knnRes, rknnRes);
         List<Set<Vertex>> res = algo.fit();
-        dumpToCSV("Out/res1.csv", res);
+
+        CsvHandler.dumpToCSV("Out/res3.csv", res);
     }
 
-    public static void dumpToCSV(String path, List<Set<Vertex>> data) {
-        File file = new File(path);
-        try {
-            FileWriter outputfile = new FileWriter(file);
-
-            CSVWriter writer = new CSVWriter(outputfile);
-
-            String[] header = { "CLUSTER_ID", "SCHEMA", "NAME", "TYPE" };
-            writer.writeNext(header);
-
-            int clusterID = 0;
-            for (Set<Vertex> vertexSet : data) {
-                for (Vertex vertex : vertexSet) {
-                    String[] output = { Integer.toString(clusterID), vertex.getSchema(),
-                            Integer.toString(vertex.getLabel()), vertex.getType() };
-                    writer.writeNext(output);
-                }
-                clusterID++;
-            }
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     // return the k nearest neighbours for each vertex of a graph
     public static Map<Vertex, Set<Vertex>> knn(int k, Graph graph) {
