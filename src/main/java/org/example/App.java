@@ -6,15 +6,31 @@ import java.util.Set;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        Graph graph = CsvHandler.parseCSV("CSVs/test.csv");
+        String inputFilePath = args[0];
+        String outputFilePath = args[1];
+        int k = Integer.parseInt(args[2]);
+        int nearestNeighbourAlgorithm = Integer.parseInt(args[3]);
+        int n = Integer.parseInt(args[4]);
 
-        Map<Vertex, Set<Vertex>> knnRes = NearestNeighbour.knn(5, graph);
-        Map<Vertex, Set<Vertex>> rKnnRes = NearestNeighbour.rknn(knnRes);
-        Map<Vertex, Set<Vertex>> mKnnRes = NearestNeighbour.mknn(knnRes, rKnnRes);
+        Graph graph = CsvHandler.parseCSV(inputFilePath);
 
-        HCNN algo = new HCNN(graph, 10, knnRes, rKnnRes);
-        List<Set<Vertex>> res = algo.fit();
+        Map<Vertex, Set<Vertex>> knnRes = NearestNeighbour.knn(k, graph);
 
-        CsvHandler.dumpToCSV("Out/res3.csv", res);
+        Map<Vertex, Set<Vertex>> nnAlgorithm;
+        if (nearestNeighbourAlgorithm == 1) {
+            nnAlgorithm = NearestNeighbour.rknn(knnRes);
+
+        } else if (nearestNeighbourAlgorithm == 2) {
+            Map<Vertex, Set<Vertex>> rKnnRes = NearestNeighbour.rknn(knnRes);
+            nnAlgorithm = NearestNeighbour.mknn(knnRes, rKnnRes);
+
+        } else {
+            throw new IllegalArgumentException("Type 1 for rKNN or 2 for mKNN");
+        }
+
+        HCNN algo = new HCNN(graph, n, knnRes, nnAlgorithm);
+        List<Set<Vertex>> result = algo.fit();
+
+        CsvHandler.dumpToCSV(outputFilePath, result);
     }
 }
