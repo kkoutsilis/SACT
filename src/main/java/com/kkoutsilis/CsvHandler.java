@@ -1,4 +1,4 @@
-package org.example;
+package com.kkoutsilis;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;

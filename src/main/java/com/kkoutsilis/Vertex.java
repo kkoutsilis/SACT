@@ -1,4 +1,4 @@
-package org.example;
+package com.kkoutsilis;
 
 import java.util.Objects;
 

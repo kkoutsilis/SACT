@@ -1,6 +1,6 @@
-package org.example;
+package com.kkoutsilis;
 
-import org.example.sets.DisjointSets;
+import com.kkoutsilis.sets.DisjointSets;
 
 import java.util.*;
 

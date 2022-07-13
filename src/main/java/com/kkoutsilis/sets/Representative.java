@@ -1,6 +1,4 @@
-package org.example.sets;
-
-import java.util.Objects;
+package com.kkoutsilis.sets;
 
 public class Representative {
     private Node head;

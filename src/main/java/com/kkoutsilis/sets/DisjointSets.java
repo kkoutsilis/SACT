@@ -1,7 +1,7 @@
-package org.example.sets;
+package com.kkoutsilis.sets;
 
 
-import org.example.Vertex;
+import com.kkoutsilis.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
