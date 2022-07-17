@@ -1,4 +1,4 @@
-package com.kkoutsilis;
+package com.kkoutsilis.helpers;
 
 import java.util.Objects;
 

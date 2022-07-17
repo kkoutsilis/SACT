@@ -1,4 +1,6 @@
-package com.kkoutsilis;
+package com.kkoutsilis.sets;
+
+import com.kkoutsilis.helpers.Vertex;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;

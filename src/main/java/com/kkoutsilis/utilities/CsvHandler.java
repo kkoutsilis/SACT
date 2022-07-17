@@ -1,5 +1,7 @@
-package com.kkoutsilis;
+package com.kkoutsilis.utilities;
 
+import com.kkoutsilis.helpers.Vertex;
+import com.kkoutsilis.sets.Graph;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
@@ -16,6 +18,7 @@ public class CsvHandler {
     private CsvHandler() {
         throw new IllegalStateException("Utility class");
     }
+
     public static Graph parseCSV(String path) throws IllegalStateException {
         Graph graph = new Graph();
         try (CSVReader reader = new CSVReaderBuilder(new FileReader(path)).withSkipLines(1)           // skip the first line, header info

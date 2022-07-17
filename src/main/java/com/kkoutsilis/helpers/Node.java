@@ -1,6 +1,4 @@
-package com.kkoutsilis.sets;
-
-import com.kkoutsilis.Vertex;
+package com.kkoutsilis.helpers;
 
 import java.util.Set;
 
@@ -41,9 +39,6 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node{" +
-                "data=" + data +
-                ", next=" + next +
-                '}';
+        return "Node{" + "data=" + data + ", next=" + next + '}';
     }
 }
