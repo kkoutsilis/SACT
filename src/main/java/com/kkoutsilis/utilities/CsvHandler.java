@@ -1,7 +1,6 @@
 package com.kkoutsilis.utilities;
 
 import com.kkoutsilis.helpers.Vertex;
-import com.kkoutsilis.sets.Graph;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
@@ -11,30 +10,29 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class CsvHandler {
     private CsvHandler() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static Graph parseCSV(String path) throws IllegalStateException {
-        Graph graph = new Graph();
+    public static Map<Vertex, Set<Vertex>> parseCSV(String path) throws IllegalStateException {
+        Map<Vertex, Set<Vertex>> vertices = new HashMap<>();
         try (CSVReader reader = new CSVReaderBuilder(new FileReader(path)).withSkipLines(1)           // skip the first line, header info
                 .build()) {
             List<String[]> r = reader.readAll();
             for (String[] row : r) {
                 Vertex v1 = new Vertex(Integer.parseInt(row[2]), row[1], row[3]);
                 Vertex v2 = new Vertex(Integer.parseInt(row[5]), row[4], row[6]);
-                graph.addVertex(v1);
-                graph.addVertex(v2);
-                graph.addEdge(v1, v2);
+                vertices.putIfAbsent(v1, new LinkedHashSet<>());
+                vertices.putIfAbsent(v2, new LinkedHashSet<>());
+                vertices.get(v1).add(v2);
             }
         } catch (IOException | CsvException e) {
             e.printStackTrace();
         }
-        return graph;
+        return vertices;
     }
 
     public static void dumpToCSV(String path, List<Set<Vertex>> data) {

@@ -23,7 +23,7 @@ public class NearestNeighbour {
             visited.add(index);
             while (!queue.isEmpty() && neighbours.size() < k) {
                 Vertex vertex = queue.poll();
-                for (Vertex v : graph.getEdges(vertex.getLabel())) {
+                for (Vertex v : graph.getEdges(vertex)) {
                     if (!visited.contains(v) && neighbours.size() < k) {
                         visited.add(v);
                         neighbours.add(v);

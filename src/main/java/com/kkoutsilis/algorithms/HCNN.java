@@ -1,12 +1,8 @@
 package com.kkoutsilis.algorithms;
 
-import com.kkoutsilis.sets.Graph;
-import com.kkoutsilis.helpers.Vertex;
-import com.kkoutsilis.helpers.ClustersAndOutliers;
-import com.kkoutsilis.helpers.CorePair;
-import com.kkoutsilis.helpers.MSP;
-import com.kkoutsilis.helpers.PairSim;
+import com.kkoutsilis.helpers.*;
 import com.kkoutsilis.sets.DisjointSets;
+import com.kkoutsilis.sets.Graph;
 
 import java.util.*;
 
@@ -324,7 +320,7 @@ public class HCNN {
             int u = vertex.getLabel();
 
             // do for each neighbor `v` of `u`
-            for (Vertex edge : graph.getEdges(u)) {
+            for (Vertex edge : graph.getEdges(vertex)) {
                 int v = edge.getLabel();
                 int weight = 1;
 

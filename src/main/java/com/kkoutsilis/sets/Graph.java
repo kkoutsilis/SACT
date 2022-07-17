@@ -42,8 +42,8 @@ public class Graph {
         return this.vertices;
     }
 
-    public Set<Vertex> getEdges(int label) {
-        return vertices.get(new Vertex(label));
+    public Set<Vertex> getEdges(Vertex vertex) {
+        return vertices.get(vertex);
     }
 
     public void printVertices() {

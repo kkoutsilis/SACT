@@ -18,7 +18,9 @@ public class App {
         int nearestNeighbourAlgorithm = Integer.parseInt(args[3]);
         int n = Integer.parseInt(args[4]);
 
-        Graph graph = CsvHandler.parseCSV(inputFilePath);
+        Map<Vertex, Set<Vertex>> inputVertices = CsvHandler.parseCSV(inputFilePath);
+
+        Graph graph = new Graph(inputVertices);
 
         Map<Vertex, Set<Vertex>> knnRes = NearestNeighbour.knn(k, graph);
 
