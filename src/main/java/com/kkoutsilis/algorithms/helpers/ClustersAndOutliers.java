@@ -1,5 +1,7 @@
-package com.kkoutsilis.helpers;
+package com.kkoutsilis.algorithms.helpers;
 
+
+import com.kkoutsilis.graphs.Vertex;
 
 import java.util.List;
 import java.util.Set;

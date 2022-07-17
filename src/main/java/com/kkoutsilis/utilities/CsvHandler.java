@@ -1,6 +1,6 @@
 package com.kkoutsilis.utilities;
 
-import com.kkoutsilis.helpers.Vertex;
+import com.kkoutsilis.graphs.Vertex;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;

@@ -1,9 +1,7 @@
 package com.kkoutsilis.sets;
 
 
-import com.kkoutsilis.helpers.Node;
-import com.kkoutsilis.helpers.Representative;
-import com.kkoutsilis.helpers.Vertex;
+import com.kkoutsilis.graphs.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,13 +1,17 @@
 package com.kkoutsilis.algorithms;
 
-import com.kkoutsilis.helpers.*;
+import com.kkoutsilis.algorithms.helpers.ClustersAndOutliers;
+import com.kkoutsilis.algorithms.helpers.CorePair;
+import com.kkoutsilis.algorithms.helpers.MSP;
+import com.kkoutsilis.algorithms.helpers.PairSim;
+import com.kkoutsilis.graphs.Vertex;
 import com.kkoutsilis.sets.DisjointSets;
-import com.kkoutsilis.sets.Graph;
+import com.kkoutsilis.graphs.Graph;
 
 import java.util.*;
 
 
-public class HCNN {
+public class HCNN implements ClusteringAlgorithm {
     private Graph graph;
     private List<Integer> indexes;
     private List<Vertex> G;
@@ -30,6 +34,7 @@ public class HCNN {
         this.G = new ArrayList<>(this.graph.getVertices().keySet());
     }
 
+    @Override
     public List<Set<Vertex>> fit() throws Exception {
         ClustersAndOutliers clustersAndOutliers = this.initializeClustering();
         List<Set<Vertex>> C = clustersAndOutliers.getClusters();

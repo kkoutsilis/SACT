@@ -1,8 +1,9 @@
 package com.kkoutsilis;
 
+import com.kkoutsilis.algorithms.ClusteringAlgorithm;
 import com.kkoutsilis.algorithms.HCNN;
-import com.kkoutsilis.helpers.Vertex;
-import com.kkoutsilis.sets.Graph;
+import com.kkoutsilis.graphs.Vertex;
+import com.kkoutsilis.graphs.Graph;
 import com.kkoutsilis.utilities.CsvHandler;
 import com.kkoutsilis.utilities.NearestNeighbour;
 
@@ -36,7 +37,7 @@ public class App {
             throw new IllegalArgumentException("Type 1 for rKNN or 2 for mKNN");
         }
 
-        HCNN algo = new HCNN(graph, n, knnRes, nnAlgorithm);
+        ClusteringAlgorithm algo = new HCNN(graph, n, knnRes, nnAlgorithm);
         List<Set<Vertex>> result = algo.fit();
 
         CsvHandler.dumpToCSV(outputFilePath, result);

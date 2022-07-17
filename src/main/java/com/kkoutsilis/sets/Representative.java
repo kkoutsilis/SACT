@@ -1,4 +1,4 @@
-package com.kkoutsilis.helpers;
+package com.kkoutsilis.sets;
 
 public class Representative {
     private Node head;

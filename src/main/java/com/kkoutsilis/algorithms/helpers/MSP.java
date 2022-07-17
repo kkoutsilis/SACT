@@ -1,4 +1,4 @@
-package com.kkoutsilis.helpers;
+package com.kkoutsilis.algorithms.helpers;
 
 public class MSP {
     private int i;

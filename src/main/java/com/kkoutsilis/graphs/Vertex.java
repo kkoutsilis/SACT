@@ -1,4 +1,4 @@
-package com.kkoutsilis.helpers;
+package com.kkoutsilis.graphs;
 
 import java.util.Objects;
 

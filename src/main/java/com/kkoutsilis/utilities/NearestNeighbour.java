@@ -1,7 +1,7 @@
 package com.kkoutsilis.utilities;
 
-import com.kkoutsilis.helpers.Vertex;
-import com.kkoutsilis.sets.Graph;
+import com.kkoutsilis.graphs.Vertex;
+import com.kkoutsilis.graphs.Graph;
 
 import java.util.*;
 

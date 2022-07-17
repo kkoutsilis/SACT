@@ -1,4 +1,6 @@
-package com.kkoutsilis.helpers;
+package com.kkoutsilis.sets;
+
+import com.kkoutsilis.graphs.Vertex;
 
 import java.util.Set;
 
