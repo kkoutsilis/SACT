@@ -24,7 +24,7 @@ public class DisjointSets {
         representative.setHead(node);
         representative.setTail(node);
         sets.add(representative);
-        return findSet(representative.getHead().getData()); //TODO refactor
+        return findSet(representative.getHead().getData());
     }
 
     public int findSet(Set<Vertex> value) {
@@ -61,7 +61,6 @@ public class DisjointSets {
         return indexX;
     }
 
-    // TODO refactor probably
     public Representative getRepresentative(int index) {
         return this.sets.get(index);
     }

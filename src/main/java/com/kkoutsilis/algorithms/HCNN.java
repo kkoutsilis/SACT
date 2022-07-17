@@ -4,9 +4,9 @@ import com.kkoutsilis.algorithms.helpers.ClustersAndOutliers;
 import com.kkoutsilis.algorithms.helpers.CorePair;
 import com.kkoutsilis.algorithms.helpers.MSP;
 import com.kkoutsilis.algorithms.helpers.PairSim;
+import com.kkoutsilis.graphs.Graph;
 import com.kkoutsilis.graphs.Vertex;
 import com.kkoutsilis.sets.DisjointSets;
-import com.kkoutsilis.graphs.Graph;
 
 import java.util.*;
 
@@ -80,7 +80,7 @@ public class HCNN implements ClusteringAlgorithm {
             // line 13-16
             for (int i = 0; i < L; i++) {
                 int index = DS.findSet(C.get(i));
-                Set<Vertex> repr = DS.getRepresentative(index).getHead().getData(); // TODO refactor
+                Set<Vertex> repr = DS.getRepresentative(index).getHead().getData();
                 if (repr != C.get(i)) {
                     repr.addAll(C.get(i));
                     C.set(i, Collections.emptySet());
@@ -295,48 +295,37 @@ public class HCNN implements ClusteringAlgorithm {
 
     private int dist(int source, int dest) {
         int nOfVertices = this.graph.getVertices().size() + 1;
-        // create a min-heap and push source node having distance 0
         PriorityQueue<Vertex> minHeap;
         minHeap = new PriorityQueue<>(Comparator.comparingInt(Vertex::getLabel));
         minHeap.add(new Vertex(source));
 
-        // set initial distance from the source to `v` as infinity
         List<Integer> dist;
         dist = new ArrayList<>(Collections.nCopies(nOfVertices, Integer.MAX_VALUE));
 
-        // distance from the source to itself is zero
         dist.set(source, 0);
 
-        // boolean array to track vertices for which minimum
-        // cost is already found
         boolean[] done = new boolean[nOfVertices];
         done[source] = true;
 
-        // stores predecessor of a vertex (to a print path)
         int[] prev = new int[nOfVertices];
         prev[source] = -1;
 
-        // run till min-heap is empty
         while (!minHeap.isEmpty()) {
             // Remove and return the best vertex
             Vertex vertex = minHeap.poll();
 
-            // get the vertex number
             int u = vertex.getLabel();
 
-            // do for each neighbor `v` of `u`
             for (Vertex edge : graph.getEdges(vertex)) {
                 int v = edge.getLabel();
                 int weight = 1;
 
-                // Relaxation step
                 if (!done[v] && (dist.get(u) + weight) < dist.get(v)) {
                     dist.set(v, dist.get(u) + weight);
                     prev[v] = u;
                     minHeap.add(new Vertex(v));
                 }
             }
-            // mark vertex `u` as done so it will not get picked up again
             done[u] = true;
         }
         return dist.get(dest);

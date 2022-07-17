@@ -5,7 +5,7 @@ import com.kkoutsilis.graphs.Graph;
 
 import java.util.*;
 
-public class NearestNeighbour {
+public final class NearestNeighbour {
     private NearestNeighbour() {
         throw new IllegalStateException("Utility class");
 
