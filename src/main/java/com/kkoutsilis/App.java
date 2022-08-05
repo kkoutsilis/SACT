@@ -16,30 +16,55 @@ public class App {
         String inputFilePath = args[0];
         String outputFilePath = args[1];
         int k = Integer.parseInt(args[2]);
-        int nearestNeighbourAlgorithm = Integer.parseInt(args[3]);
-        int n = Integer.parseInt(args[4]);
+        int fistNearestNeighbourAlgorithm = Integer.parseInt(args[3]);
+        int secondNearestNeighbourAlgorithm = Integer.parseInt(args[4]);
+        int n = Integer.parseInt(args[5]);
 
         Map<Vertex, Set<Vertex>> inputVertices = CsvHandler.parseCSV(inputFilePath);
 
         Graph graph = new Graph(inputVertices);
 
-        Map<Vertex, Set<Vertex>> knnRes = NearestNeighbour.knn(k, graph);
+        Map<Vertex, Set<Vertex>> knn = NearestNeighbour.knn(k, graph);
 
-        Map<Vertex, Set<Vertex>> nnAlgorithm;
-        if (nearestNeighbourAlgorithm == 1) {
-            nnAlgorithm = NearestNeighbour.rknn(knnRes);
+        Map<Vertex, Set<Vertex>> fistNnAlgorithm;
+        if (fistNearestNeighbourAlgorithm == 1) {
+            fistNnAlgorithm = knn;
 
-        } else if (nearestNeighbourAlgorithm == 2) {
-            Map<Vertex, Set<Vertex>> rKnnRes = NearestNeighbour.rknn(knnRes);
-            nnAlgorithm = NearestNeighbour.mknn(knnRes, rKnnRes);
+        } else if (fistNearestNeighbourAlgorithm == 2) {
+            Map<Vertex, Set<Vertex>> rKnnRes = NearestNeighbour.rknn(knn);
+            fistNnAlgorithm = NearestNeighbour.mknn(knn, rKnnRes);
 
         } else {
-            throw new IllegalArgumentException("Type 1 for rKNN or 2 for mKNN");
+            throw new IllegalArgumentException("Type 1 for KNN or 2 for mKNN");
+        }
+        Map<Vertex, Set<Vertex>> secondNnAglorithm;
+        if (secondNearestNeighbourAlgorithm == 1) {
+            secondNnAglorithm = knn;
+
+        } else if (secondNearestNeighbourAlgorithm == 2) {
+            Map<Vertex, Set<Vertex>> rKnnRes = NearestNeighbour.rknn(knn);
+            secondNnAglorithm = NearestNeighbour.mknn(knn, rKnnRes);
+
+        } else if (secondNearestNeighbourAlgorithm == 3) {
+            secondNnAglorithm = NearestNeighbour.rknn(knn);
+
+        } else {
+            throw new IllegalArgumentException("Type 1 for KNN, 2 for mKNN or 3 for rKNN");
         }
 
-        ClusteringAlgorithm algo = new HCNN(graph, n, knnRes, nnAlgorithm);
+        if (fistNearestNeighbourAlgorithm == 1 && secondNearestNeighbourAlgorithm == 3) {
+            throw new IllegalArgumentException("KNN cannot be combined with rKNN");
+        }
+
+        ClusteringAlgorithm algo = new HCNN(graph, n, fistNnAlgorithm, secondNnAglorithm);
         List<Set<Vertex>> result = algo.fit();
 
         CsvHandler.dumpToCSV(outputFilePath, result);
+        int i = 0;
+        for (Set<Vertex> s : result) {
+            System.out.printf("------------------------------CLUSTER%d------------------------------%n", i++);
+            System.out.println(s);
+            System.out.println();
+        }
     }
 }
