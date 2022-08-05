@@ -20,6 +20,8 @@ public class App {
         int secondNearestNeighbourAlgorithm = Integer.parseInt(args[4]);
         int n = Integer.parseInt(args[5]);
 
+        long startTime = System.nanoTime();
+
         Map<Vertex, Set<Vertex>> inputVertices = CsvHandler.parseCSV(inputFilePath);
 
         Graph graph = new Graph(inputVertices);
@@ -60,11 +62,14 @@ public class App {
         List<Set<Vertex>> result = algo.fit();
 
         CsvHandler.dumpToCSV(outputFilePath, result);
+        long elapsedTime = System.nanoTime() - startTime;
         int i = 0;
         for (Set<Vertex> s : result) {
             System.out.printf("------------------------------CLUSTER%d------------------------------%n", i++);
             System.out.println(s);
             System.out.println();
         }
+        System.out.println("Total execution time in millis: " + elapsedTime / 1000000);
+
     }
 }
