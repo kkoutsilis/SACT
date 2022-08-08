@@ -4,6 +4,7 @@ import com.kkoutsilis.algorithms.ClusteringAlgorithm;
 import com.kkoutsilis.algorithms.HCNN;
 import com.kkoutsilis.graphs.Vertex;
 import com.kkoutsilis.graphs.Graph;
+import com.kkoutsilis.quality_measures.SilhouetteCoefficient;
 import com.kkoutsilis.utilities.CsvHandler;
 import com.kkoutsilis.utilities.NearestNeighbour;
 
@@ -66,10 +67,12 @@ public class App {
         int i = 0;
         for (Set<Vertex> s : result) {
             System.out.printf("------------------------------CLUSTER%d------------------------------%n", i++);
-            System.out.println(s);
+            s.forEach(v -> System.out.print(v.getLabel() + " "));
             System.out.println();
         }
         System.out.println("Total execution time in millis: " + elapsedTime / 1000000);
 
+        SilhouetteCoefficient quality = new SilhouetteCoefficient(result,graph);
+        System.out.println(quality.calculate());
     }
 }
