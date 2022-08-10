@@ -71,12 +71,12 @@ public class SilhouetteCoefficient {
         return res;
     }
 
-    public int dist(int source, int dest) {
+    private int dist(int source, int dest) {
         int nOfVertices = this.graph.getVertices().size() + 1;
         PriorityQueue<Vertex> minHeap;
         minHeap = new PriorityQueue<>(Comparator.comparingInt(Vertex::getLabel));
-        minHeap.add(new Vertex(source));
-
+        Vertex sourceVertex = this.graph.getVertices().keySet().stream().filter(v -> v.getLabel() == source).findFirst().orElse(null);
+        minHeap.add(sourceVertex);
         List<Integer> dist;
         dist = new ArrayList<>(Collections.nCopies(nOfVertices, Integer.MAX_VALUE));
 
@@ -101,7 +101,7 @@ public class SilhouetteCoefficient {
                 if (!done[v] && (dist.get(u) + weight) < dist.get(v)) {
                     dist.set(v, dist.get(u) + weight);
                     prev[v] = u;
-                    minHeap.add(new Vertex(v));
+                    minHeap.add(edge);
                 }
             }
             done[u] = true;
