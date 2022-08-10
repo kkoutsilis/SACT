@@ -54,7 +54,7 @@ public class Vertex {
         if (this == o) return true;
         if (!(o instanceof Vertex)) return false;
         Vertex vertex = (Vertex) o;
-        return getLabel() == vertex.getLabel();
+        return getLabel() == vertex.getLabel() && Objects.equals(getSchema(), vertex.getSchema()) && Objects.equals(getType(), vertex.getType());
     }
 
     @Override
