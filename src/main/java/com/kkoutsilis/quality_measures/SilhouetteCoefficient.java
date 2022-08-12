@@ -5,16 +5,10 @@ import com.kkoutsilis.graphs.Vertex;
 
 import java.util.*;
 
-public class SilhouetteCoefficient {
-    private List<Set<Vertex>> clusteringResult;
-    private Graph graph;
-
-    public SilhouetteCoefficient() {
-    }
+public class SilhouetteCoefficient extends QualityMeasure {
 
     public SilhouetteCoefficient(List<Set<Vertex>> clusteringResult, Graph graph) {
-        this.clusteringResult = clusteringResult;
-        this.graph = graph;
+        super(clusteringResult, graph);
     }
 
     public float calculate() {
@@ -60,15 +54,7 @@ public class SilhouetteCoefficient {
     }
 
     private float s(float a, float b) {
-        float res;
-        if (a < b) {
-            res = 1 - (a / b);
-        } else if (a > b) {
-            res = (b / a) - 1;
-        } else {
-            res = 0;
-        }
-        return res;
+        return (b - a) / Math.max(a, b);
     }
 
     public int dist(int source, int dest) {
@@ -89,7 +75,6 @@ public class SilhouetteCoefficient {
         prev[source] = -1;
 
         while (!minHeap.isEmpty()) {
-            // Remove and return the best vertex
             Vertex vertex = minHeap.poll();
 
             int u = vertex.getLabel();
