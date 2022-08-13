@@ -57,11 +57,12 @@ public class SilhouetteCoefficient extends QualityMeasure {
         return (b - a) / Math.max(a, b);
     }
 
-    public int dist(int source, int dest) {
+    private int dist(int source, int dest) {
         int nOfVertices = this.graph.getVertices().size() + 1;
         PriorityQueue<Vertex> minHeap;
         minHeap = new PriorityQueue<>(Comparator.comparingInt(Vertex::getLabel));
-        minHeap.add(new Vertex(source));
+        Vertex sourceVertex = this.graph.getVertices().keySet().stream().filter(v -> v.getLabel() == source).findFirst().orElse(null);
+        minHeap.add(sourceVertex);
 
         List<Integer> dist;
         dist = new ArrayList<>(Collections.nCopies(nOfVertices, Integer.MAX_VALUE));
@@ -76,17 +77,13 @@ public class SilhouetteCoefficient extends QualityMeasure {
 
         while (!minHeap.isEmpty()) {
             Vertex vertex = minHeap.poll();
-
             int u = vertex.getLabel();
-
             for (Vertex edge : graph.getEdges(vertex)) {
                 int v = edge.getLabel();
-                int weight = 1;
-
-                if (!done[v] && (dist.get(u) + weight) < dist.get(v)) {
-                    dist.set(v, dist.get(u) + weight);
+                if (!done[v] && (dist.get(u)) < dist.get(v)) {
+                    dist.set(v, dist.get(u));
                     prev[v] = u;
-                    minHeap.add(new Vertex(v));
+                    minHeap.add(edge);
                 }
             }
             done[u] = true;
