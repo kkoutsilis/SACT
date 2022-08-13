@@ -7,6 +7,7 @@ import com.kkoutsilis.algorithms.helpers.PairSim;
 import com.kkoutsilis.graphs.Graph;
 import com.kkoutsilis.graphs.Vertex;
 import com.kkoutsilis.sets.DisjointSets;
+import com.kkoutsilis.utilities.Distance;
 
 import java.util.*;
 
@@ -127,7 +128,7 @@ public class HCNN implements ClusteringAlgorithm {
                 int minDist = Integer.MAX_VALUE;
                 for (int i : indexes) {
                     if (label[i] > 0) {
-                        int distance = this.dist(i, o.getLabel());
+                        int distance = Distance.calculate(i, o.getLabel(), this.graph);
                         if (minDist > distance) {
                             minDist = distance;
                         }
@@ -144,6 +145,7 @@ public class HCNN implements ClusteringAlgorithm {
             }
         }
         clusters.add(loners);
+        clusters.removeIf(Set::isEmpty);
         return clusters;
     }
 
@@ -291,39 +293,5 @@ public class HCNN implements ClusteringAlgorithm {
 
     private float sim(Set<Vertex> clusterA, Set<Vertex> clusterB) {
         return ((float) conn(clusterA, clusterB) / (float) (clusterA.size() * clusterB.size())) * ((float) link(clusterA, clusterB) / (float) clusterA.size()) * ((float) link(clusterB, clusterA) / (float) clusterB.size());
-    }
-
-    private int dist(int source, int dest) {
-        int nOfVertices = this.graph.getVertices().size() + 1;
-        PriorityQueue<Vertex> minHeap;
-        minHeap = new PriorityQueue<>(Comparator.comparingInt(Vertex::getLabel));
-        Vertex sourceVertex = this.graph.getVertices().keySet().stream().filter(v -> v.getLabel() == source).findFirst().orElse(null);
-        minHeap.add(sourceVertex);
-
-        List<Integer> dist;
-        dist = new ArrayList<>(Collections.nCopies(nOfVertices, Integer.MAX_VALUE));
-
-        dist.set(source, 0);
-
-        boolean[] done = new boolean[nOfVertices];
-        done[source] = true;
-
-        int[] prev = new int[nOfVertices];
-        prev[source] = -1;
-
-        while (!minHeap.isEmpty()) {
-            Vertex vertex = minHeap.poll();
-            int u = vertex.getLabel();
-            for (Vertex edge : graph.getEdges(vertex)) {
-                int v = edge.getLabel();
-                if (!done[v] && (dist.get(u)) < dist.get(v)) {
-                    dist.set(v, dist.get(u));
-                    prev[v] = u;
-                    minHeap.add(edge);
-                }
-            }
-            done[u] = true;
-        }
-        return dist.get(dest);
     }
 }

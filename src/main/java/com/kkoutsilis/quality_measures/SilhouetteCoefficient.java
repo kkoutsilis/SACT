@@ -2,8 +2,12 @@ package com.kkoutsilis.quality_measures;
 
 import com.kkoutsilis.graphs.Graph;
 import com.kkoutsilis.graphs.Vertex;
+import com.kkoutsilis.utilities.Distance;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class SilhouetteCoefficient extends QualityMeasure {
 
@@ -30,7 +34,7 @@ public class SilhouetteCoefficient extends QualityMeasure {
         float sum = 0;
         for (Vertex j : cluster) {
             if (i != j) {
-                sum += this.dist(i.getLabel(), j.getLabel());
+                sum += Distance.calculate(i.getLabel(), j.getLabel(), this.graph);
             }
         }
         return (1f / (cluster.size() - 1) * sum);
@@ -42,7 +46,7 @@ public class SilhouetteCoefficient extends QualityMeasure {
             if (c != cluster) {
                 float sum = 0;
                 for (Vertex j : c) {
-                    sum += this.dist(i.getLabel(), j.getLabel());
+                    sum += Distance.calculate(i.getLabel(), j.getLabel(), this.graph);
                 }
                 float res = (1f / c.size()) * sum;
                 if (res < minB) {
@@ -54,40 +58,14 @@ public class SilhouetteCoefficient extends QualityMeasure {
     }
 
     private float s(float a, float b) {
-        return (b - a) / Math.max(a, b);
-    }
-
-    private int dist(int source, int dest) {
-        int nOfVertices = this.graph.getVertices().size() + 1;
-        PriorityQueue<Vertex> minHeap;
-        minHeap = new PriorityQueue<>(Comparator.comparingInt(Vertex::getLabel));
-        Vertex sourceVertex = this.graph.getVertices().keySet().stream().filter(v -> v.getLabel() == source).findFirst().orElse(null);
-        minHeap.add(sourceVertex);
-
-        List<Integer> dist;
-        dist = new ArrayList<>(Collections.nCopies(nOfVertices, Integer.MAX_VALUE));
-
-        dist.set(source, 0);
-
-        boolean[] done = new boolean[nOfVertices];
-        done[source] = true;
-
-        int[] prev = new int[nOfVertices];
-        prev[source] = -1;
-
-        while (!minHeap.isEmpty()) {
-            Vertex vertex = minHeap.poll();
-            int u = vertex.getLabel();
-            for (Vertex edge : graph.getEdges(vertex)) {
-                int v = edge.getLabel();
-                if (!done[v] && (dist.get(u)) < dist.get(v)) {
-                    dist.set(v, dist.get(u));
-                    prev[v] = u;
-                    minHeap.add(edge);
-                }
-            }
-            done[u] = true;
+        float res;
+        if (a < b) {
+            res = 1f - (a / b);
+        } else if (a > b) {
+            res = (b / a) - 1f;
+        } else {
+            res = 0;
         }
-        return dist.get(dest);
+        return res;
     }
 }
