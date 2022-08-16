@@ -16,10 +16,6 @@ public class Vertex {
         this.type = type;
     }
 
-    public Vertex(int label) {
-        this.label = label;
-    }
-
     public int getLabel() {
         return label;
     }
