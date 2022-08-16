@@ -40,16 +40,16 @@ public class App {
         } else {
             throw new IllegalArgumentException("Type 1 for KNN or 2 for mKNN");
         }
-        Map<Vertex, Set<Vertex>> secondNnAglorithm;
+        Map<Vertex, Set<Vertex>> secondNnAlgorithm;
         if (secondNearestNeighbourAlgorithm == 1) {
-            secondNnAglorithm = knn;
+            secondNnAlgorithm = knn;
 
         } else if (secondNearestNeighbourAlgorithm == 2) {
             Map<Vertex, Set<Vertex>> rKnnRes = NearestNeighbour.rknn(knn);
-            secondNnAglorithm = NearestNeighbour.mknn(knn, rKnnRes);
+            secondNnAlgorithm = NearestNeighbour.mknn(knn, rKnnRes);
 
         } else if (secondNearestNeighbourAlgorithm == 3) {
-            secondNnAglorithm = NearestNeighbour.rknn(knn);
+            secondNnAlgorithm = NearestNeighbour.rknn(knn);
 
         } else {
             throw new IllegalArgumentException("Type 1 for KNN, 2 for mKNN or 3 for rKNN");
@@ -59,7 +59,7 @@ public class App {
             throw new IllegalArgumentException("KNN cannot be combined with rKNN");
         }
 
-        ClusteringAlgorithm algo = new HCNN(graph, n, fistNnAlgorithm, secondNnAglorithm);
+        ClusteringAlgorithm algo = new HCNN(graph, n, fistNnAlgorithm, secondNnAlgorithm);
         List<Set<Vertex>> result = algo.fit();
 
         CsvHandler.dumpToCSV(outputFilePath, result);
