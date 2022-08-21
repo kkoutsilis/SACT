@@ -73,6 +73,6 @@ public class App {
         System.out.println("Total execution time in millis: " + elapsedTime / 1000000);
 
         SilhouetteCoefficient quality = new SilhouetteCoefficient(result, graph);
-        System.out.println(quality.calculate());
+        System.out.printf("Silhouette Coefficient: %.03f",quality.calculate());
     }
 }
