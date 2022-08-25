@@ -17,17 +17,17 @@ public class HCNN implements ClusteringAlgorithm {
     private List<Integer> indexes;
     private List<Vertex> G;
     private int n;
-    private Map<Vertex, Set<Vertex>> knn;
-    private Map<Vertex, Set<Vertex>> rkkn;
+    private Map<Vertex, Set<Vertex>> fistNnAlgorithm;
+    private Map<Vertex, Set<Vertex>> secondNnAlgorithm;
 
     public HCNN() {
     }
 
-    public HCNN(Graph graph, int n, Map<Vertex, Set<Vertex>> knn, Map<Vertex, Set<Vertex>> rknn) {
+    public HCNN(Graph graph, int n, Map<Vertex, Set<Vertex>> fistNnAlgorithm, Map<Vertex, Set<Vertex>> secondNnAlgorithm) {
         this.graph = graph;
         this.n = n;
-        this.knn = knn;
-        this.rkkn = rknn;
+        this.fistNnAlgorithm = fistNnAlgorithm;
+        this.secondNnAlgorithm = secondNnAlgorithm;
         this.indexes = new ArrayList<>();
         for (int i = 0; i < this.graph.getVertices().size(); i++) {
             this.indexes.add(i);
@@ -114,9 +114,9 @@ public class HCNN implements ClusteringAlgorithm {
         }
         for (Vertex o : outliers) {
             float t = o.getLabel();
-            if (!this.knn.get(o).isEmpty()) {
+            if (!this.fistNnAlgorithm.get(o).isEmpty()) {
                 float minStractSim = Float.MAX_VALUE;
-                for (Vertex i : this.knn.get(o)) {
+                for (Vertex i : this.fistNnAlgorithm.get(o)) {
                     float stractSim = z(o, i);
                     if (minStractSim > stractSim) {
                         minStractSim = stractSim;
@@ -164,10 +164,10 @@ public class HCNN implements ClusteringAlgorithm {
 
         // lines 2-7
         for (Vertex i : this.G) {
-            Set<Vertex> Q = this.knn.get(i);
-            Set<Vertex> tmp = new HashSet<>(this.knn.get(i));
+            Set<Vertex> Q = this.fistNnAlgorithm.get(i);
+            Set<Vertex> tmp = new HashSet<>(this.fistNnAlgorithm.get(i));
             for (Vertex j : tmp) {
-                Q.addAll(this.rkkn.get(j));
+                Q.addAll(this.secondNnAlgorithm.get(j));
             }
             for (Vertex q : Q) {
                 structSimZ[i.getLabel() - 1][q.getLabel() - 1] = z(i, q);
@@ -199,8 +199,8 @@ public class HCNN implements ClusteringAlgorithm {
                 corePairs[last] = new CorePair(i, j);
                 Vertex vI = this.G.get(i);
                 Vertex vJ = this.G.get(j);
-                Set<Vertex> union = new LinkedHashSet<>(knn.get(vI));
-                union.addAll(this.knn.get(vJ));
+                Set<Vertex> union = new LinkedHashSet<>(fistNnAlgorithm.get(vI));
+                union.addAll(this.fistNnAlgorithm.get(vJ));
                 for (Vertex u : union) {
                     int ui = this.G.indexOf(u); // wrong ??
                     if (label[ui] == 0) {
@@ -254,11 +254,11 @@ public class HCNN implements ClusteringAlgorithm {
     }
 
     private float z(Vertex i, Vertex j) {
-        Set<Vertex> intersection = new LinkedHashSet<>(this.knn.get(i));
-        intersection.retainAll(this.knn.get(j));
+        Set<Vertex> intersection = new LinkedHashSet<>(this.fistNnAlgorithm.get(i));
+        intersection.retainAll(this.fistNnAlgorithm.get(j));
 
-        Set<Vertex> union = new LinkedHashSet<>(this.knn.get(i));
-        union.addAll(this.knn.get(j));
+        Set<Vertex> union = new LinkedHashSet<>(this.fistNnAlgorithm.get(i));
+        union.addAll(this.fistNnAlgorithm.get(j));
 
         return (float) intersection.size() / (float) union.size();
     }
@@ -266,13 +266,13 @@ public class HCNN implements ClusteringAlgorithm {
     private int conn(Set<Vertex> clusterA, Set<Vertex> clusterB) {
         int connSum = 0;
         for (Vertex a : clusterA) {
-            Set<Vertex> intersection = new LinkedHashSet<>(this.knn.get(a));
+            Set<Vertex> intersection = new LinkedHashSet<>(this.fistNnAlgorithm.get(a));
             intersection.retainAll(clusterB);
             connSum += intersection.size();
         }
 
         for (Vertex b : clusterB) {
-            Set<Vertex> intersection = new LinkedHashSet<>(this.knn.get(b));
+            Set<Vertex> intersection = new LinkedHashSet<>(this.fistNnAlgorithm.get(b));
             intersection.retainAll(clusterA);
             connSum += intersection.size();
         }
@@ -282,7 +282,7 @@ public class HCNN implements ClusteringAlgorithm {
     private int link(Set<Vertex> clusterA, Set<Vertex> clusterB) {
         Set<Set<Vertex>> linkSet = new LinkedHashSet<>();
         for (Vertex a : clusterA) {
-            Set<Vertex> intersection = new LinkedHashSet<>(this.knn.get(a));
+            Set<Vertex> intersection = new LinkedHashSet<>(this.fistNnAlgorithm.get(a));
             intersection.retainAll(clusterB);
             if (!intersection.isEmpty()) {
                 linkSet.add(intersection);
