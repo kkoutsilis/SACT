@@ -70,9 +70,9 @@ public class App {
             s.forEach(v -> System.out.print(v.getLabel() + " "));
             System.out.println();
         }
-        System.out.println("Total execution time in millis: " + elapsedTime / 1000000);
+        System.out.println("Clustering execution time in milliseconds: " + elapsedTime / 1000000);
 
         SilhouetteCoefficient quality = new SilhouetteCoefficient(result, graph);
-        System.out.printf("Silhouette Coefficient: %.03f",quality.calculate());
+        System.out.printf("Silhouette Coefficient: %.03f", quality.calculate());
     }
 }
