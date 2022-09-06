@@ -26,7 +26,7 @@ public class Graph {
         vertices.remove(vertex);
     }
 
-    public void addEdge(Vertex vertex1, Vertex vertex2) {
+    public void addEdge(Vertex vertex1,Vertex vertex2) {
         vertices.get(vertex1).add(vertex2);
     }
 
