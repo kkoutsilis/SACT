@@ -10,6 +10,8 @@ import com.kkoutsilis.sets.DisjointSets;
 import com.kkoutsilis.utilities.Distance;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author kkoutsilis
@@ -21,6 +23,7 @@ public class HCNN implements ClusteringAlgorithm {
     private int n;
     private Map<Vertex, Set<Vertex>> fistNnAlgorithm;
     private Map<Vertex, Set<Vertex>> secondNnAlgorithm;
+    private final Logger logger = Logger.getLogger(HCNN.class.getName());
 
     public HCNN(Graph graph, int n, Map<Vertex, Set<Vertex>> fistNnAlgorithm,
             Map<Vertex, Set<Vertex>> secondNnAlgorithm) {
@@ -37,6 +40,7 @@ public class HCNN implements ClusteringAlgorithm {
 
     @Override
     public List<Set<Vertex>> fit() throws Exception {
+        this.logger.log(Level.INFO, "Fitting...");
         ClustersAndOutliers clustersAndOutliers = this.initializeClustering();
         List<Set<Vertex>> clusters = clustersAndOutliers.getClusters();
         Set<Vertex> outliers = clustersAndOutliers.getOutliers();
@@ -95,6 +99,7 @@ public class HCNN implements ClusteringAlgorithm {
     }
 
     private List<Set<Vertex>> assignOutliers(List<Set<Vertex>> clusters, Set<Vertex> outliers) {
+        this.logger.log(Level.INFO, "Assigning outliers...");
         float[] label = new float[this.indexes.size() + 1];
         Set<Vertex> loners = new HashSet<>();
         for (int i = 0; i <= this.indexes.size(); i++) {
@@ -143,6 +148,7 @@ public class HCNN implements ClusteringAlgorithm {
     }
 
     private ClustersAndOutliers initializeClustering() {
+        this.logger.log(Level.INFO, "Initializing clusters...");
         int nOfIndexes = this.indexes.size();
         CorePair[] corePairs = new CorePair[nOfIndexes];
         int[] label = new int[nOfIndexes];
