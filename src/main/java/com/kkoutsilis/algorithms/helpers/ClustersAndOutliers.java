@@ -1,11 +1,13 @@
 package com.kkoutsilis.algorithms.helpers;
 
-
 import com.kkoutsilis.graphs.Vertex;
 
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author kkoutsilis
+ */
 public class ClustersAndOutliers {
     private List<Set<Vertex>> clusters;
     private Set<Vertex> outliers;

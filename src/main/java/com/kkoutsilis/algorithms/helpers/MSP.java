@@ -1,5 +1,8 @@
 package com.kkoutsilis.algorithms.helpers;
 
+/**
+ * @author kkoutsilis
+ */
 public class MSP {
     private int i;
     private int j;

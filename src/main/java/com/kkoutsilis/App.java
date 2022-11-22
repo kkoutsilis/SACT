@@ -14,6 +14,9 @@ import com.kkoutsilis.quality_measures.SilhouetteCoefficient;
 import com.kkoutsilis.utilities.CsvHandler;
 import com.kkoutsilis.utilities.NearestNeighbour;
 
+/**
+ * @author kkoutsilis
+ */
 public class App {
     public static void main(String[] args) throws Exception {
         final Logger logger = Logger.getLogger(App.class.getName());

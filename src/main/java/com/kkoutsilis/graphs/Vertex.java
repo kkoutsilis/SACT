@@ -2,6 +2,9 @@ package com.kkoutsilis.graphs;
 
 import java.util.Objects;
 
+/**
+ * @author kkoutsilis
+ */
 public class Vertex {
     private int label;
     private String schema;
@@ -47,8 +50,10 @@ public class Vertex {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Vertex)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Vertex))
+            return false;
         Vertex vertex = (Vertex) o;
         return getLabel() == vertex.getLabel();
     }

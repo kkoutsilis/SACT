@@ -5,9 +5,11 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * @author kkoutsilis
+ */
 public class Graph {
     private final Map<Vertex, Set<Vertex>> vertices;
-
 
     public Graph() {
         this.vertices = new HashMap<>();
@@ -26,13 +28,14 @@ public class Graph {
         vertices.remove(vertex);
     }
 
-    public void addEdge(Vertex vertex1,Vertex vertex2) {
+    public void addEdge(Vertex vertex1, Vertex vertex2) {
         vertices.get(vertex1).add(vertex2);
     }
 
     public void removeEdge(Vertex vertex1, Vertex vertex2) {
         Set<Vertex> eV1 = vertices.get(vertex1);
-        if (eV1 != null) eV1.remove(vertex2);
+        if (eV1 != null)
+            eV1.remove(vertex2);
 
     }
 

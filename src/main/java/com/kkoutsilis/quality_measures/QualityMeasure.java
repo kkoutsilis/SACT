@@ -6,6 +6,9 @@ import com.kkoutsilis.graphs.Vertex;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author kkoutsilis
+ */
 public abstract class QualityMeasure {
     final List<Set<Vertex>> clusteringResult;
     final Graph graph;

@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * @author kkoutsilis
+ */
 public final class CsvHandler {
     private CsvHandler() {
         throw new IllegalStateException("Utility class");

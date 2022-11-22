@@ -1,12 +1,15 @@
 package com.kkoutsilis.sets;
 
+/**
+ * @author kkoutsilis
+ */
 public class Representative {
     private Node head;
     private Node tail;
 
-    public  Representative(){
-        this.head=null;
-        this.tail=null;
+    public Representative() {
+        this.head = null;
+        this.tail = null;
     }
 
     public Node getHead() {

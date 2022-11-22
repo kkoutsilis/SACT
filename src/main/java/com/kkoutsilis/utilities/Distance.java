@@ -6,6 +6,10 @@ import com.kkoutsilis.graphs.Vertex;
 import java.util.*;
 
 /**
+ * @author kkoutsilis
+ *  */
+
+/**
  * Dijkstra's algorithm
  */
 public final class Distance {
@@ -14,13 +18,13 @@ public final class Distance {
         throw new IllegalStateException("Utility class");
     }
 
-
     public static int calculate(int source, int dest, Graph graph) {
         int nOfVertices = graph.getVertices().size() + 1;
         PriorityQueue<Vertex> minHeap;
         minHeap = new PriorityQueue<>(Comparator.comparingInt(Vertex::getLabel));
 
-        Vertex sourceVertex = graph.getVertices().keySet().stream().filter(v -> v.getLabel() == source).findFirst().orElse(null);
+        Vertex sourceVertex = graph.getVertices().keySet().stream().filter(v -> v.getLabel() == source).findFirst()
+                .orElse(null);
         minHeap.add(sourceVertex);
 
         List<Integer> dist;

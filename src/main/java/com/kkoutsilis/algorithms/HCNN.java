@@ -11,6 +11,9 @@ import com.kkoutsilis.utilities.Distance;
 
 import java.util.*;
 
+/**
+ * @author kkoutsilis
+ */
 public class HCNN implements ClusteringAlgorithm {
     private Graph graph;
     private List<Integer> indexes;
