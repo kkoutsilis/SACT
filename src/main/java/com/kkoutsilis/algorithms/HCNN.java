@@ -11,7 +11,6 @@ import com.kkoutsilis.utilities.Distance;
 
 import java.util.*;
 
-
 public class HCNN implements ClusteringAlgorithm {
     private Graph graph;
     private List<Integer> indexes;
@@ -23,7 +22,8 @@ public class HCNN implements ClusteringAlgorithm {
     public HCNN() {
     }
 
-    public HCNN(Graph graph, int n, Map<Vertex, Set<Vertex>> fistNnAlgorithm, Map<Vertex, Set<Vertex>> secondNnAlgorithm) {
+    public HCNN(Graph graph, int n, Map<Vertex, Set<Vertex>> fistNnAlgorithm,
+            Map<Vertex, Set<Vertex>> secondNnAlgorithm) {
         this.graph = graph;
         this.n = n;
         this.fistNnAlgorithm = fistNnAlgorithm;
@@ -43,7 +43,6 @@ public class HCNN implements ClusteringAlgorithm {
 
         while (C.size() > this.n) {
             int L = C.size();
-            // line 4
             float tmax = 0;
             for (int i = 0; i < L; i++) {
                 for (int j = i + 1; j < L; j++) {
@@ -53,11 +52,9 @@ public class HCNN implements ClusteringAlgorithm {
                     }
                 }
             }
-            // line 5
             if (tmax == 0) {
                 break;
             }
-            // line 7
             Set<MSP> msp = new LinkedHashSet<>();
             for (int i = 0; i < L; i++) {
                 for (int j = i + 1; j < L; j++) {
@@ -67,18 +64,15 @@ public class HCNN implements ClusteringAlgorithm {
                     }
                 }
             }
-            // line 8-10
             DisjointSets DS = new DisjointSets();
             for (Set<Vertex> vertices : C) {
                 DS.makeSet(vertices);
             }
-            // line 11-12
             for (MSP msp1 : msp) {
                 int i = msp1.getI();
                 int j = msp1.getJ();
                 DS.union(C.get(i), C.get(j));
             }
-            // line 13-16
             for (int i = 0; i < L; i++) {
                 int index = DS.findSet(C.get(i));
                 Set<Vertex> repr = DS.getRepresentative(index).getHead().getData();
@@ -87,7 +81,6 @@ public class HCNN implements ClusteringAlgorithm {
                     C.set(i, Collections.emptySet());
                 }
             }
-            // line 17-20
             List<Set<Vertex>> Ctemp = new ArrayList<>(C);
             C = new ArrayList<>();
             for (Set<Vertex> c : Ctemp) {
@@ -150,7 +143,6 @@ public class HCNN implements ClusteringAlgorithm {
     }
 
     private ClustersAndOutliers initializeClustering() {
-        // initializing
         int nOfIndexes = this.indexes.size();
         CorePair[] corePairs = new CorePair[nOfIndexes];
         int[] label = new int[nOfIndexes];
@@ -162,7 +154,6 @@ public class HCNN implements ClusteringAlgorithm {
         Set<Vertex> outliers = new LinkedHashSet<>();
         float[][] structSimZ = new float[nOfIndexes][nOfIndexes];
 
-        // lines 2-7
         for (Vertex i : this.G) {
             Set<Vertex> Q = this.fistNnAlgorithm.get(i);
             Set<Vertex> tmp = new HashSet<>(this.fistNnAlgorithm.get(i));
@@ -174,7 +165,6 @@ public class HCNN implements ClusteringAlgorithm {
             }
         }
 
-        // line 8
         List<PairSim> pairSims = new ArrayList<>();
         for (int i = 0; i < nOfIndexes; i++) {
             for (int j = i + 1; j < nOfIndexes; j++) {
@@ -195,14 +185,14 @@ public class HCNN implements ClusteringAlgorithm {
             int j = pairSim.getJ() - 1;
             if (label[i] == 0 && label[j] == 0) {
                 last += 1;
-                label[i] = label[j] = last;// Not sure about that, line 14
+                label[i] = label[j] = last;
                 corePairs[last] = new CorePair(i, j);
                 Vertex vI = this.G.get(i);
                 Vertex vJ = this.G.get(j);
                 Set<Vertex> union = new LinkedHashSet<>(fistNnAlgorithm.get(vI));
                 union.addAll(this.fistNnAlgorithm.get(vJ));
                 for (Vertex u : union) {
-                    int ui = this.G.indexOf(u); // wrong ??
+                    int ui = this.G.indexOf(u);
                     if (label[ui] == 0) {
                         label[ui] = last;
                     }
@@ -234,9 +224,8 @@ public class HCNN implements ClusteringAlgorithm {
             }
         }
 
-        // line 23-28
         List<Set<Vertex>> clusters = new ArrayList<>();
-        for (int i : this.indexes) {
+        for (int i = 0; i <= this.indexes.size(); i++) {
             clusters.add(new HashSet<>());
         }
         for (int i : this.indexes) {
@@ -248,7 +237,7 @@ public class HCNN implements ClusteringAlgorithm {
                 outliers.add(vI);
             }
         }
-        clusters.removeIf(Set::isEmpty); // Not the best but it works for now.
+        clusters.removeIf(Set::isEmpty); // Not the best but works for now.
         return new ClustersAndOutliers(clusters, outliers);
 
     }
@@ -292,6 +281,8 @@ public class HCNN implements ClusteringAlgorithm {
     }
 
     private float sim(Set<Vertex> clusterA, Set<Vertex> clusterB) {
-        return ((float) conn(clusterA, clusterB) / (float) (clusterA.size() * clusterB.size())) * ((float) link(clusterA, clusterB) / (float) clusterA.size()) * ((float) link(clusterB, clusterA) / (float) clusterB.size());
+        return ((float) conn(clusterA, clusterB) / (float) (clusterA.size() * clusterB.size()))
+                * ((float) link(clusterA, clusterB) / (float) clusterA.size())
+                * ((float) link(clusterB, clusterA) / (float) clusterB.size());
     }
 }
