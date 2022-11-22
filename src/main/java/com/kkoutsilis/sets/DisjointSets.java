@@ -1,12 +1,14 @@
 package com.kkoutsilis.sets;
 
-
 import com.kkoutsilis.graphs.Vertex;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author kkoutsilis
+ */
 public class DisjointSets {
     private List<Representative> sets;
 

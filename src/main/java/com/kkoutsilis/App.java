@@ -1,5 +1,11 @@
 package com.kkoutsilis;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.kkoutsilis.algorithms.ClusteringAlgorithm;
 import com.kkoutsilis.algorithms.HCNN;
 import com.kkoutsilis.graphs.Graph;
@@ -8,18 +14,18 @@ import com.kkoutsilis.quality_measures.SilhouetteCoefficient;
 import com.kkoutsilis.utilities.CsvHandler;
 import com.kkoutsilis.utilities.NearestNeighbour;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+/**
+ * @author kkoutsilis
+ */
 public class App {
     public static void main(String[] args) throws Exception {
-        String inputFilePath = args[0];
-        String outputFilePath = args[1];
-        int k = Integer.parseInt(args[2]);
-        int fistNearestNeighbourAlgorithm = Integer.parseInt(args[3]);
-        int secondNearestNeighbourAlgorithm = Integer.parseInt(args[4]);
-        int n = Integer.parseInt(args[5]);
+        final Logger logger = Logger.getLogger(App.class.getName());
+        final String inputFilePath = args[0];
+        final String outputFilePath = args[1];
+        final int k = Integer.parseInt(args[2]);
+        final int fistNearestNeighbourAlgorithm = Integer.parseInt(args[3]);
+        final int secondNearestNeighbourAlgorithm = Integer.parseInt(args[4]);
+        final int n = Integer.parseInt(args[5]);
 
         long startTime = System.nanoTime();
 
@@ -70,9 +76,10 @@ public class App {
             s.forEach(v -> System.out.print(v.getLabel() + " "));
             System.out.println();
         }
-        System.out.println("Clustering execution time in milliseconds: " + elapsedTime / 1000000);
+        logger.log(Level.INFO,
+                () -> "Clustering execution time in milliseconds: " + elapsedTime / 1000000);
 
         SilhouetteCoefficient quality = new SilhouetteCoefficient(result, graph);
-        System.out.printf("Silhouette Coefficient: %.03f", quality.calculate());
+        logger.log(Level.INFO, () -> String.format("Silhouette Coefficient: %.03f", quality.calculate()));
     }
 }

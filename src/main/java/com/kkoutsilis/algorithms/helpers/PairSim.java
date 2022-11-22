@@ -2,6 +2,9 @@ package com.kkoutsilis.algorithms.helpers;
 
 import java.util.Objects;
 
+/**
+ * @author kkoutsilis
+ */
 public class PairSim {
     private int i;
     private int j;
@@ -48,8 +51,10 @@ public class PairSim {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PairSim)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof PairSim))
+            return false;
         PairSim pairSim = (PairSim) o;
         return getI() == pairSim.getI() && getJ() == pairSim.getJ() && getSimilarity() == pairSim.getSimilarity();
     }

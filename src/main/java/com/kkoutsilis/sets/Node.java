@@ -4,6 +4,9 @@ import com.kkoutsilis.graphs.Vertex;
 
 import java.util.Set;
 
+/**
+ * @author kkoutsilis
+ */
 public class Node {
     private Set<Vertex> data;
     private Node next;

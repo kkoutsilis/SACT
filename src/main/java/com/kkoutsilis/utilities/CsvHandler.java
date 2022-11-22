@@ -12,6 +12,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * @author kkoutsilis
+ */
 public final class CsvHandler {
     private CsvHandler() {
         throw new IllegalStateException("Utility class");
@@ -19,8 +22,7 @@ public final class CsvHandler {
 
     public static Map<Vertex, Set<Vertex>> parseCSV(String path) throws IllegalStateException {
         Map<Vertex, Set<Vertex>> vertices = new HashMap<>();
-        try (CSVReader reader = new CSVReaderBuilder(new FileReader(path)).withSkipLines(1)           // skip the first line, header info
-                .build()) {
+        try (CSVReader reader = new CSVReaderBuilder(new FileReader(path)).withSkipLines(1).build()) {
             List<String[]> r = reader.readAll();
             for (String[] row : r) {
                 Vertex v1 = new Vertex(Integer.parseInt(row[2]), row[1], row[3]);
@@ -42,13 +44,14 @@ public final class CsvHandler {
 
             CSVWriter writer = new CSVWriter(outfile);
 
-            String[] header = {"CLUSTER_ID", "SCHEMA", "NAME", "TYPE"};
+            String[] header = { "CLUSTER_ID", "SCHEMA", "NAME", "TYPE" };
             writer.writeNext(header);
 
             int clusterID = 0;
             for (Set<Vertex> vertexSet : data) {
                 for (Vertex vertex : vertexSet) {
-                    String[] output = {Integer.toString(clusterID), vertex.getSchema(), Integer.toString(vertex.getLabel()), vertex.getType()};
+                    String[] output = { Integer.toString(clusterID), vertex.getSchema(),
+                            Integer.toString(vertex.getLabel()), vertex.getType() };
                     writer.writeNext(output);
                 }
                 clusterID++;

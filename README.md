@@ -20,7 +20,7 @@ It requires 6 arguments in this order.
 Example:
 
 ```bash
-$ java −jar SACT−1.0−SNAPSHOT.jar ./exp1.csv ./res.csv 3 1 1 2
+$ java −jar SACT−1.1−SNAPSHOT.jar ./exp1.csv ./res.csv 3 1 1 2
 ```
 
 It will print the created clusters in the console as well as create a csv file with the clusters.

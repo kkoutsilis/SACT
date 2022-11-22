@@ -5,13 +5,15 @@ import com.kkoutsilis.graphs.Graph;
 
 import java.util.*;
 
+/**
+ * @author kkoutsilis
+ */
 public final class NearestNeighbour {
     private NearestNeighbour() {
         throw new IllegalStateException("Utility class");
 
     }
 
-    // return the k nearest neighbours for each vertex of a graph
     public static Map<Vertex, Set<Vertex>> knn(int k, Graph graph) {
         Map<Vertex, Set<Vertex>> nearestNeighbours = new HashMap<>();
         Set<Vertex> indexes = new LinkedHashSet<>(graph.getVertices().keySet());
@@ -36,7 +38,6 @@ public final class NearestNeighbour {
         return nearestNeighbours;
     }
 
-    // reverse nearest neighbours of knn
     public static Map<Vertex, Set<Vertex>> rknn(Map<Vertex, Set<Vertex>> knn) {
         Map<Vertex, Set<Vertex>> reverseNearestNeighbours = new HashMap<>();
         Set<Vertex> D = knn.keySet();

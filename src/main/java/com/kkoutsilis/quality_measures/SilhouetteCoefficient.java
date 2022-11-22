@@ -9,6 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author kkoutsilis
+ */
 public class SilhouetteCoefficient extends QualityMeasure {
 
     public SilhouetteCoefficient(List<Set<Vertex>> clusteringResult, Graph graph) {

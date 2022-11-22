@@ -2,6 +2,9 @@ package com.kkoutsilis.algorithms.helpers;
 
 import java.util.Objects;
 
+/**
+ * @author kkoutsilis
+ */
 public class CorePair {
     private int i;
     private int j;
@@ -38,8 +41,10 @@ public class CorePair {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CorePair)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof CorePair))
+            return false;
         CorePair corePair = (CorePair) o;
         return getI() == corePair.getI() && getJ() == corePair.getJ();
     }
