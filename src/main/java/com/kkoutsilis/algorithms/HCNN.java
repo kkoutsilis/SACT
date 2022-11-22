@@ -22,9 +22,6 @@ public class HCNN implements ClusteringAlgorithm {
     private Map<Vertex, Set<Vertex>> fistNnAlgorithm;
     private Map<Vertex, Set<Vertex>> secondNnAlgorithm;
 
-    public HCNN() {
-    }
-
     public HCNN(Graph graph, int n, Map<Vertex, Set<Vertex>> fistNnAlgorithm,
             Map<Vertex, Set<Vertex>> secondNnAlgorithm) {
         this.graph = graph;
