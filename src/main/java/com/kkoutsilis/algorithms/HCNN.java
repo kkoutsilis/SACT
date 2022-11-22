@@ -17,7 +17,7 @@ import java.util.*;
 public class HCNN implements ClusteringAlgorithm {
     private Graph graph;
     private List<Integer> indexes;
-    private List<Vertex> G;
+    private List<Vertex> data;
     private int n;
     private Map<Vertex, Set<Vertex>> fistNnAlgorithm;
     private Map<Vertex, Set<Vertex>> secondNnAlgorithm;
@@ -35,66 +35,66 @@ public class HCNN implements ClusteringAlgorithm {
         for (int i = 0; i < this.graph.getVertices().size(); i++) {
             this.indexes.add(i);
         }
-        this.G = new ArrayList<>(this.graph.getVertices().keySet());
+        this.data = new ArrayList<>(this.graph.getVertices().keySet());
     }
 
     @Override
     public List<Set<Vertex>> fit() throws Exception {
         ClustersAndOutliers clustersAndOutliers = this.initializeClustering();
-        List<Set<Vertex>> C = clustersAndOutliers.getClusters();
-        Set<Vertex> D = clustersAndOutliers.getOutliers();
+        List<Set<Vertex>> clusters = clustersAndOutliers.getClusters();
+        Set<Vertex> outliers = clustersAndOutliers.getOutliers();
 
-        while (C.size() > this.n) {
-            int L = C.size();
-            float tmax = 0;
-            for (int i = 0; i < L; i++) {
-                for (int j = i + 1; j < L; j++) {
-                    float similarity = sim(C.get(i), C.get(j));
-                    if (tmax < similarity) {
-                        tmax = similarity;
+        while (clusters.size() > this.n) {
+            int l = clusters.size();
+            float tMax = 0;
+            for (int i = 0; i < l; i++) {
+                for (int j = i + 1; j < l; j++) {
+                    float similarity = sim(clusters.get(i), clusters.get(j));
+                    if (tMax < similarity) {
+                        tMax = similarity;
                     }
                 }
             }
-            if (tmax == 0) {
+            if (tMax == 0) {
                 break;
             }
             Set<MSP> msp = new LinkedHashSet<>();
-            for (int i = 0; i < L; i++) {
-                for (int j = i + 1; j < L; j++) {
-                    float similarity = sim(C.get(i), C.get(j));
-                    if (similarity == tmax) {
+            for (int i = 0; i < l; i++) {
+                for (int j = i + 1; j < l; j++) {
+                    float similarity = sim(clusters.get(i), clusters.get(j));
+                    if (similarity == tMax) {
                         msp.add(new MSP(i, j));
                     }
                 }
             }
-            DisjointSets DS = new DisjointSets();
-            for (Set<Vertex> vertices : C) {
-                DS.makeSet(vertices);
+            DisjointSets disjointSets = new DisjointSets();
+            for (Set<Vertex> vertices : clusters) {
+                disjointSets.makeSet(vertices);
             }
             for (MSP msp1 : msp) {
                 int i = msp1.getI();
                 int j = msp1.getJ();
-                DS.union(C.get(i), C.get(j));
+                disjointSets.union(clusters.get(i), clusters.get(j));
             }
-            for (int i = 0; i < L; i++) {
-                int index = DS.findSet(C.get(i));
-                Set<Vertex> repr = DS.getRepresentative(index).getHead().getData();
-                if (repr != C.get(i)) {
-                    repr.addAll(C.get(i));
-                    C.set(i, Collections.emptySet());
+            for (int i = 0; i < l; i++) {
+                int index = disjointSets.findSet(clusters.get(i));
+                Set<Vertex> repr = disjointSets.getRepresentative(index).getHead().getData();
+                if (repr != clusters.get(i)) {
+                    repr.addAll(clusters.get(i));
+                    clusters.set(i, Collections.emptySet());
                 }
             }
-            List<Set<Vertex>> Ctemp = new ArrayList<>(C);
-            C = new ArrayList<>();
-            for (Set<Vertex> c : Ctemp) {
+            List<Set<Vertex>> tempClusters = new ArrayList<>(clusters);
+            clusters = new ArrayList<>();
+            for (Set<Vertex> c : tempClusters) {
                 if (!c.isEmpty()) {
-                    C.add(c);
+                    clusters.add(c);
                 }
             }
         }
-        C = assignOutliers(C, D);
+        clusters = assignOutliers(clusters, outliers);
 
-        return C;
+        return clusters;
     }
 
     private List<Set<Vertex>> assignOutliers(List<Set<Vertex>> clusters, Set<Vertex> outliers) {
@@ -157,7 +157,7 @@ public class HCNN implements ClusteringAlgorithm {
         Set<Vertex> outliers = new LinkedHashSet<>();
         float[][] structSimZ = new float[nOfIndexes][nOfIndexes];
 
-        for (Vertex i : this.G) {
+        for (Vertex i : this.data) {
             Set<Vertex> Q = this.fistNnAlgorithm.get(i);
             Set<Vertex> tmp = new HashSet<>(this.fistNnAlgorithm.get(i));
             for (Vertex j : tmp) {
@@ -171,8 +171,8 @@ public class HCNN implements ClusteringAlgorithm {
         List<PairSim> pairSims = new ArrayList<>();
         for (int i = 0; i < nOfIndexes; i++) {
             for (int j = i + 1; j < nOfIndexes; j++) {
-                Vertex vI = this.G.get(i);
-                Vertex vJ = this.G.get(j);
+                Vertex vI = this.data.get(i);
+                Vertex vJ = this.data.get(j);
                 float structSim = z(vI, vJ);
                 if (structSim > 0) {
                     pairSims.add(new PairSim(vI.getLabel(), vJ.getLabel(), structSim));
@@ -190,12 +190,12 @@ public class HCNN implements ClusteringAlgorithm {
                 last += 1;
                 label[i] = label[j] = last;
                 corePairs[last] = new CorePair(i, j);
-                Vertex vI = this.G.get(i);
-                Vertex vJ = this.G.get(j);
+                Vertex vI = this.data.get(i);
+                Vertex vJ = this.data.get(j);
                 Set<Vertex> union = new LinkedHashSet<>(fistNnAlgorithm.get(vI));
                 union.addAll(this.fistNnAlgorithm.get(vJ));
                 for (Vertex u : union) {
-                    int ui = this.G.indexOf(u);
+                    int ui = this.data.indexOf(u);
                     if (label[ui] == 0) {
                         label[ui] = last;
                     }
@@ -204,14 +204,14 @@ public class HCNN implements ClusteringAlgorithm {
                         int h = corePair.getI();
                         int k = corePair.getJ();
 
-                        Vertex vuI = this.G.get(ui);
+                        Vertex vuI = this.data.get(ui);
                         float max = z(vuI, vI);
                         float temp = z(vuI, vJ);
                         if (max < temp) {
                             max = temp;
                         }
-                        Vertex vH = this.G.get(h);
-                        Vertex vK = this.G.get(k);
+                        Vertex vH = this.data.get(h);
+                        Vertex vK = this.data.get(k);
 
                         float min = z(vuI, vH);
                         temp = z(vuI, vK);
@@ -232,7 +232,7 @@ public class HCNN implements ClusteringAlgorithm {
             clusters.add(new HashSet<>());
         }
         for (int i : this.indexes) {
-            Vertex vI = this.G.get(i);
+            Vertex vI = this.data.get(i);
             if (label[i] > 0) {
                 clusters.get(label[i]).add(vI);
             }
