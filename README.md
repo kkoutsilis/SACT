@@ -1,5 +1,7 @@
 # Static Analysis Clustering Tool
 
+![Build](https://github.com/kkoutsilis/SACT/actions/workflows/maven_ci.yml/badge.svg)
+
 ## Usage
 
 Download the latest release from [here](https://github.com/koutsilis1999/SACT/releases).
